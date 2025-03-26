@@ -10,12 +10,25 @@ import java.time.format.DateTimeFormatter
 
 object Constants {
 
+    object Colors {
+        val DARK_BLUE = Color(0xFFBE1E2D)
+    }
+
     object Gradient {
         val RED_TO_BLACK = listOf(Color(0xFFBE1E2D), Color(0xFF231F20))
         val BLACK_TO_GRAY = listOf(Color(0xFF231F20), Color(0xFF414042))
         val GRAY_TO_WHITE = listOf(Color(0xFF414042), Color.White)
     }
-
+    object Regex {
+        const val NO_LIMIT = ".*"
+        const val ONLY_LETTERS_AND_NUMBERS = "^[\\p{L}\\p{N}]+\$"
+        const val ONLY_NUMBERS_ABOVE_ZERO = "^[1-9][0-9]*\$"
+        const val ONLY_NUMBERS = "^[0-9]+\$"
+        const val PRICE = "^\\d+(\\.\\d{0,2})?\$"
+        const val BARCODE = "^^[\\p{L}\\p{N}]+\$"
+        const val ZDDS = "^[BG0-9]+\$"
+        const val EDIT_PERCENT_FIELD = "^(100(\\.0{0,2})?|([1-9]?\\d(\\.\\d{0,2})?)?)\$"
+    }
     object Routes {
         const val LOGIN = "login"
         const val MAIN_MENU = "main_menu"

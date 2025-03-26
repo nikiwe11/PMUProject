@@ -1,5 +1,6 @@
 package com.example.chatappsingle.ui.theme
 
+import android.provider.CalendarContract.Colors
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -102,18 +103,9 @@ fun ChatApp(
 //                    }
 //        }
         // Background
-//        Surface(modifier = Modifier.fillMaxSize()) {
-//            Image(
-//                contentScale = ContentScale.FillBounds,
-//                painter = painterResource(
-//                    selectFromTheme(
-//                        lightThemeValue = R.drawable.background_light,
-//                        darkThemeValue = R.drawable.background_dark
-//                    )
-//                ),
-//                contentDescription = null
-//            )
-//        }
+        Surface(modifier = Modifier.fillMaxSize()) {
+
+        }
         // Displayed anywhere when there is no connection to the printer
 
 
