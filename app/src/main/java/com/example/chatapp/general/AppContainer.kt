@@ -1,4 +1,4 @@
-package com.example.chatappsingle.general
+package com.example.chatapp.general
 
 import android.content.Context
 

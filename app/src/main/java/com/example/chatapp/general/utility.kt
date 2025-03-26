@@ -1,8 +1,8 @@
-package com.example.chatappsingle.general
+package com.example.chatapp.general
 
 import android.util.Log
 import androidx.compose.ui.graphics.Color
-import com.example.chatappsingle.viewmodel.SettingsDetails
+import com.example.chatapp.viewmodel.SettingsDetails
 import java.time.DateTimeException
 import java.time.LocalDate
 import java.time.LocalTime

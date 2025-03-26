@@ -1,12 +1,10 @@
-package com.example.chatappsingle.viewmodel
+package com.example.chatapp.viewmodel
 
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.chatappsingle.general.ChatApplication
+import com.example.chatapp.general.ChatApplication
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {

@@ -1,4 +1,4 @@
-package com.example.chatappsingle
+package com.example.chatapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,15 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.example.chatappsingle.ui.theme.ChatApp
-import com.example.chatappsingle.ui.theme.ChatAppSingleTheme
+import com.example.chatapp.ui.theme.ChatApp
+import com.example.chatapp.ui.theme.ChatAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ChatAppSingleTheme {
+            ChatAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     ChatApp(
                         name = "Android",

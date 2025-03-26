@@ -1,25 +1,17 @@
-package com.example.chatappsingle.ui.theme
+package com.example.chatapp.ui.theme
 
-import android.provider.CalendarContract.Colors
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,8 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,16 +31,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.chatappsingle.R
-import com.example.chatappsingle.general.Constants
-import com.example.chatappsingle.general.TransparentSurfaceWithGradient
-import com.example.chatappsingle.general.selectFromTheme
-import com.example.chatappsingle.screens.LoginScreen
-import com.example.chatappsingle.screens.MainMenuScreen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import com.example.chatappsingle.general.Constants.Routes as routes
+import com.example.chatapp.general.Constants
+import com.example.chatapp.general.TransparentSurfaceWithGradient
+import com.example.chatapp.general.selectFromTheme
+import com.example.chatapp.screens.LoginScreen
+import com.example.chatapp.screens.MainMenuScreen
+import com.example.chatapp.R
+import com.example.chatapp.general.Constants.Routes as routes
 
 @Composable
 fun ChatApp(
@@ -174,7 +161,7 @@ fun CustomTopAppBar(
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    ChatAppSingleTheme {
+    ChatAppTheme {
         ChatApp("Android")
     }
 }

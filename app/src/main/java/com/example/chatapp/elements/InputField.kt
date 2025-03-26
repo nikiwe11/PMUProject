@@ -1,4 +1,4 @@
-package com.example.chatappsingle.elements
+package com.example.chatapp.elements
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -20,10 +20,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.chatappsingle.general.Constants
-import com.example.chatappsingle.general.selectFromTheme
-import com.example.chatappsingle.R
-import com.example.chatappsingle.ui.theme.ChatAppSingleTheme
+import com.example.chatapp.general.Constants
+import com.example.chatapp.general.selectFromTheme
+import com.example.chatapp.R
+
+import com.example.chatapp.ui.theme.ChatAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,7 +111,7 @@ fun InputField(
 @Composable
 
 fun Preview() {
-    ChatAppSingleTheme {
+    ChatAppTheme {
         InputField(
             modifier = Modifier,
             value = "",

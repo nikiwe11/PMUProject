@@ -1,8 +1,6 @@
-package com.example.chatappsingle.general
+package com.example.chatapp.general
 
 import android.app.Application
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
 
 class ChatApplication : Application() {
 

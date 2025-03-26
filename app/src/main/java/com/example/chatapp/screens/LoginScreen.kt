@@ -1,4 +1,4 @@
-package com.example.chatappsingle.screens
+package com.example.chatapp.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,11 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.chatappsingle.general.TransparentSurfaceWithGradient
-import com.example.chatappsingle.R
-import com.example.chatappsingle.elements.InputField
-import com.example.chatappsingle.viewmodel.AppViewModelProvider
-import com.example.chatappsingle.viewmodel.LoginScreenViewModel
+import com.example.chatapp.general.TransparentSurfaceWithGradient
+import com.example.chatapp.R
+import com.example.chatapp.elements.InputField
+import com.example.chatapp.viewmodel.AppViewModelProvider
+import com.example.chatapp.viewmodel.LoginScreenViewModel
 
 @Composable
 fun LoginScreen(
@@ -61,7 +61,6 @@ fun LoginScreen(
                     },
                     labelText = "Password"
                 )
-
                 Button(
                     onClick = {
                         if (viewModel.validateUser()) {
@@ -78,6 +77,4 @@ fun LoginScreen(
             }
         }
     }
-
-
 }

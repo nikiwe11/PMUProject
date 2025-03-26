@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.chatappsingle"
+    namespace = "com.example.chatapp"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.chatappsingle"
+        applicationId = "com.example.chatapp"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
@@ -55,6 +55,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     // Navigation
     implementation ("androidx.navigation:navigation-compose:2.7.7")
+    // Firebase
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+
+    // Declare the dependency for the Firebase Authentication library
+    implementation ("com.google.firebase:firebase-auth-ktx")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
