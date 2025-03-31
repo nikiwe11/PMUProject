@@ -31,6 +31,7 @@ object Constants {
     }
     object Routes {
         const val LOGIN = "login"
+        const val SIGN_UP = "signup"
         const val MAIN_MENU = "main_menu"
         const val CHAT = "chat"
         const val CHAT_SETTINGS = "chat_settings"

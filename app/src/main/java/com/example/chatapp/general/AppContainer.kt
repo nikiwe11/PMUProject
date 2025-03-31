@@ -1,12 +1,13 @@
 package com.example.chatapp.general
 
 import android.content.Context
+import com.example.chatapp.data.repository.AuthRepository
 
 /**
  * App container for Dependency injection.
  */
 interface AppContainer { // Interface for repositories - if another database is added it needs to be implemented
-//    val clientRepository: ClientRepository
+
 }
 
 /**

@@ -37,11 +37,11 @@ import com.example.chatapp.general.selectFromTheme
 import com.example.chatapp.screens.LoginScreen
 import com.example.chatapp.screens.MainMenuScreen
 import com.example.chatapp.R
+import com.example.chatapp.screens.SignUpScreen
 import com.example.chatapp.general.Constants.Routes as routes
 
 @Composable
 fun ChatApp(
-    name: String, modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(), // NavController,
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -63,10 +63,6 @@ fun ChatApp(
             }
         }
     }
-    Text(
-        text = "Hellon $name!",
-        modifier = modifier
-    )
     Scaffold(
         topBar = {
             CustomTopAppBar(
@@ -89,7 +85,7 @@ fun ChatApp(
 //                        }
 //                    }
 //        }
-        // Background
+        // Background (can set different color)
         Surface(modifier = Modifier.fillMaxSize()) {
 
         }
@@ -105,10 +101,16 @@ fun ChatApp(
 
 
             composable(route = routes.LOGIN) {
-                LoginScreen(onClick = { navController.navigate(routes.MAIN_MENU) })
+                LoginScreen(navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) },
+                    navigateToSignUp = { navController.navigate(routes.SIGN_UP) })
             }
-            composable(route = routes.MAIN_MENU){
+            composable(route = routes.MAIN_MENU) {
                 MainMenuScreen()
+            }
+            composable(route = routes.SIGN_UP) {
+                SignUpScreen(
+                    navigateToLogin = { navController.navigate(routes.LOGIN) },
+                    navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) })
             }
         }
 
@@ -146,7 +148,7 @@ fun CustomTopAppBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            val text = "TOP TITLE"
+            val text = currentScreenName
             Text(
                 modifier = Modifier.alpha(1f), text = text, style = if (text.length < 23) {
                     MaterialTheme.typography.headlineSmall
@@ -162,6 +164,6 @@ fun CustomTopAppBar(
 @Composable
 fun GreetingPreview() {
     ChatAppTheme {
-        ChatApp("Android")
+        ChatApp()
     }
 }

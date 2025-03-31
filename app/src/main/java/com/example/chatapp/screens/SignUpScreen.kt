@@ -16,17 +16,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.chatapp.general.TransparentSurfaceWithGradient
+
 import com.example.chatapp.R
 import com.example.chatapp.elements.InputField
-import com.example.chatapp.viewmodel.LoginScreenViewModel
+import com.example.chatapp.general.TransparentSurfaceWithGradient
+import com.example.chatapp.viewmodel.SignUpScreenViewModel
 
 @Composable
-fun LoginScreen(
-    viewModel: LoginScreenViewModel = viewModel(),
+fun SignUpScreen(
+    viewModel: SignUpScreenViewModel = hiltViewModel(),
     navigateToMainMenu: () -> Unit,
-    navigateToSignUp: () -> Unit,
+    navigateToLogin: () -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -68,6 +68,7 @@ fun LoginScreen(
                 Button(
                     onClick = {
                         if (viewModel.validateUser()) {
+                            viewModel.signIn()
                             navigateToMainMenu()
                         } else { // todo
                             viewModel.updateUiState(
@@ -79,8 +80,8 @@ fun LoginScreen(
                     Text("Login")
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Don't have an account?")
-                    ClickableText(text = AnnotatedString("Sign up"), onClick = { navigateToSignUp() })
+                    Text("Already have an account?")
+                    ClickableText(text = AnnotatedString("Log in"), onClick = { navigateToLogin() })
                 }
             }
         }
