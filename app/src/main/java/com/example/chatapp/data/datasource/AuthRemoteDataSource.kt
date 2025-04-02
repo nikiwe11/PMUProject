@@ -1,5 +1,6 @@
 package com.example.chatapp.data.datasource
 
+import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -21,7 +22,8 @@ class AuthRemoteDataSource @Inject constructor(private val auth: FirebaseAuth) {
         }
 
     suspend fun createUserWithEmailAndPassword(email: String, password: String){
-        auth.createUserWithEmailAndPassword(email,password)
+        Log.d("test14","creating $email $password")
+        auth.createUserWithEmailAndPassword(email,password).await()
     }
 
     suspend fun createGuestAccount() {
@@ -29,6 +31,7 @@ class AuthRemoteDataSource @Inject constructor(private val auth: FirebaseAuth) {
     }
 
     suspend fun signIn(email: String, password: String) {
+        Log.d("test24","email:$email, pass:$password")
         auth.signInWithEmailAndPassword(email, password).await()
     }
 

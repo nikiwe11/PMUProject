@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,12 +41,16 @@ import com.example.chatapp.screens.LoginScreen
 import com.example.chatapp.screens.MainMenuScreen
 import com.example.chatapp.R
 import com.example.chatapp.screens.SignUpScreen
+import com.example.chatapp.viewmodel.MainViewModel
 import com.example.chatapp.general.Constants.Routes as routes
 
 @Composable
 fun ChatApp(
+    mainViewModel: MainViewModel = viewModel(),
     navController: NavHostController = rememberNavController(), // NavController,
 ) {
+    val uiState by mainViewModel.uiState.collectAsState()
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     // Gets what screen is displayed
     val currentScreen =
@@ -51,6 +58,15 @@ fun ChatApp(
 
 
     var topAppBarTitle by rememberSaveable { mutableStateOf(R.string.main_menu) }
+    if (uiState.showError) {
+        AlertDialog(
+            onDismissRequest = { mainViewModel.setErrorState(false, "") },
+            title = { Text("Warning!") },
+            text = { Text(uiState.error) },
+            dismissButton = {},
+            confirmButton = {}
+        )
+    }
     LaunchedEffect(currentScreen) {
         topAppBarTitle = when (currentScreen) {
             routes.MAIN_MENU -> R.string.main_menu
@@ -89,13 +105,12 @@ fun ChatApp(
         Surface(modifier = Modifier.fillMaxSize()) {
 
         }
-        // Displayed anywhere when there is no connection to the printer
 
 
         // Navigation between screens is controlled here
         NavHost(
             navController = navController,
-            startDestination = routes.LOGIN,
+            startDestination = routes.MAIN_MENU,
             modifier = Modifier.padding(innerPadding)
         ) {
 
@@ -105,12 +120,19 @@ fun ChatApp(
                     navigateToSignUp = { navController.navigate(routes.SIGN_UP) })
             }
             composable(route = routes.MAIN_MENU) {
-                MainMenuScreen()
+                MainMenuScreen(navigateToLogin = { navController.navigate(routes.LOGIN){
+                    popUpTo(routes.MAIN_MENU) { inclusive = true }
+                } })
             }
             composable(route = routes.SIGN_UP) {
                 SignUpScreen(
+                    toggleError = { bool, error -> mainViewModel.setErrorState(bool, error) },
                     navigateToLogin = { navController.navigate(routes.LOGIN) },
-                    navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) })
+                    navigateToMainMenu = {
+                        navController.navigate(routes.MAIN_MENU) {
+                            popUpTo(routes.SIGN_UP) { inclusive = true }
+                        }
+                    })
             }
         }
 

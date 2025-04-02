@@ -73,6 +73,9 @@ dependencies {
 
     // Declare the dependency for the Firebase Authentication library
     implementation ("com.google.firebase:firebase-auth-ktx")
+    // Declare the dependency for the Cloud Firestore library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-firestore")
     // google services
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -25,6 +25,7 @@ import com.example.chatapp.viewmodel.SignUpScreenViewModel
 @Composable
 fun SignUpScreen(
     viewModel: SignUpScreenViewModel = hiltViewModel(),
+    toggleError: (Boolean,String) -> Unit,
     navigateToMainMenu: () -> Unit,
     navigateToLogin: () -> Unit,
 ) {
@@ -48,19 +49,28 @@ fun SignUpScreen(
                 // todo icon
                 Text(text = stringResource(R.string.app_name))
                 InputField(
-                    value = uiState.loginDetails.userName,
+                    value = uiState.signUpDetails.name,
                     onValueChange = {
                         viewModel.updateUiState(
-                            uiState.loginDetails.copy(userName = it)
+                            uiState.signUpDetails.copy(name = it)
                         )
                     },
-                    labelText = "Username or Email"
+                    labelText = "Name"
                 )
                 InputField(
-                    value = uiState.loginDetails.password,
+                    value = uiState.signUpDetails.email,
                     onValueChange = {
                         viewModel.updateUiState(
-                            uiState.loginDetails.copy(password = it)
+                            uiState.signUpDetails.copy(email = it)
+                        )
+                    },
+                    labelText = "Email"
+                )
+                InputField(
+                    value = uiState.signUpDetails.password,
+                    onValueChange = {
+                        viewModel.updateUiState(
+                            uiState.signUpDetails.copy(password = it)
                         )
                     },
                     labelText = "Password"
@@ -68,16 +78,17 @@ fun SignUpScreen(
                 Button(
                     onClick = {
                         if (viewModel.validateUser()) {
-                            viewModel.signIn()
-                            navigateToMainMenu()
+                            viewModel.signIn(
+                                onSuccessAction = { navigateToMainMenu() },
+                                onErrorAction = {error -> toggleError(true,error) })
                         } else { // todo
                             viewModel.updateUiState(
-                                uiState.loginDetails.copy(password = "1", userName = "1")
+                                uiState.signUpDetails.copy(password = "1", email = "1")
                             )
                         }
                     }
                 ) {
-                    Text("Login")
+                    Text("Sign Up")
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("Already have an account?")

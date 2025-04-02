@@ -16,15 +16,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.chatapp.general.TransparentSurfaceWithGradient
 import com.example.chatapp.R
 import com.example.chatapp.elements.InputField
 import com.example.chatapp.viewmodel.LoginScreenViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginScreenViewModel = viewModel(),
+    viewModel: LoginScreenViewModel = hiltViewModel(),
     navigateToMainMenu: () -> Unit,
     navigateToSignUp: () -> Unit,
 ) {
@@ -48,10 +50,10 @@ fun LoginScreen(
                 // todo icon
                 Text(text = stringResource(R.string.app_name))
                 InputField(
-                    value = uiState.loginDetails.userName,
+                    value = uiState.loginDetails.email,
                     onValueChange = {
                         viewModel.updateUiState(
-                            uiState.loginDetails.copy(userName = it)
+                            uiState.loginDetails.copy(email = it)
                         )
                     },
                     labelText = "Username or Email"
@@ -67,20 +69,16 @@ fun LoginScreen(
                 )
                 Button(
                     onClick = {
-                        if (viewModel.validateUser()) {
-                            navigateToMainMenu()
-                        } else { // todo
-                            viewModel.updateUiState(
-                                uiState.loginDetails.copy(password = "1", userName = "1")
-                            )
-                        }
+                        viewModel.attemptLogin(onSuccess = { navigateToMainMenu() }, onFail = {})
                     }
                 ) {
                     Text("Login")
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("Don't have an account?")
-                    ClickableText(text = AnnotatedString("Sign up"), onClick = { navigateToSignUp() })
+                    ClickableText(
+                        text = AnnotatedString("Sign up"),
+                        onClick = { navigateToSignUp() })
                 }
             }
         }
