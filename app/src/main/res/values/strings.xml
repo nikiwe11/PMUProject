@@ -6,7 +6,7 @@
     <string name="chat_settings">chat settings</string>
     <string name="profile_settings">profile</string>
     <string name="field_cannot_be_empty_warning">Field cannot be empty!</string>
-
+    <string name="sign_up">Sign Up</string>
 
 
 </resources>

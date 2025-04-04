@@ -1,5 +1,6 @@
 package com.example.chatapp.general
 
+import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,6 +37,7 @@ fun TransparentSurfaceWithGradient(
             color = Color.Gray
         ), darkThemeValue = null
     ),
+    roundedCornerShape: RoundedCornerShape = RoundedCornerShape(16.dp),
     content: @Composable () -> Unit,
 ) {
     Box(modifier = modifier) {
@@ -44,11 +46,11 @@ fun TransparentSurfaceWithGradient(
             modifier = Modifier
                 .matchParentSize()
                 .alpha(alpha)
-                .clip(RoundedCornerShape(16.dp))
+                .clip(roundedCornerShape)
                 .let {
                     if (border != null) it.border(
                         border,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = roundedCornerShape
                     ) else it
                 },
         ) {

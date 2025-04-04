@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -40,6 +41,7 @@ import com.example.chatapp.general.selectFromTheme
 import com.example.chatapp.screens.LoginScreen
 import com.example.chatapp.screens.MainMenuScreen
 import com.example.chatapp.R
+import com.example.chatapp.screens.AddFriendScreen
 import com.example.chatapp.screens.SignUpScreen
 import com.example.chatapp.viewmodel.MainViewModel
 import com.example.chatapp.general.Constants.Routes as routes
@@ -70,6 +72,7 @@ fun ChatApp(
     LaunchedEffect(currentScreen) {
         topAppBarTitle = when (currentScreen) {
             routes.MAIN_MENU -> R.string.main_menu
+            routes.SIGN_UP -> R.string.sign_up
             // todo
 //            routes.REGISTRATION -> R.string.registration
 
@@ -83,7 +86,7 @@ fun ChatApp(
         topBar = {
             CustomTopAppBar(
                 currentScreenName = stringResource(topAppBarTitle),
-                navigateToLogin = { navController.navigate(routes.LOGIN) })
+            )
         }) { innerPadding ->
         val shouldShowDialog = remember { mutableStateOf(false) }
         val postRequestValue = remember { mutableStateOf("") }
@@ -116,13 +119,16 @@ fun ChatApp(
 
 
             composable(route = routes.LOGIN) {
-                LoginScreen(navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) },
+                LoginScreen(
+                    navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) },
                     navigateToSignUp = { navController.navigate(routes.SIGN_UP) })
             }
             composable(route = routes.MAIN_MENU) {
-                MainMenuScreen(navigateToLogin = { navController.navigate(routes.LOGIN){
-                    popUpTo(routes.MAIN_MENU) { inclusive = true }
-                } })
+                MainMenuScreen(navigateToLogin = {
+                    navController.navigate(routes.LOGIN) {
+                        popUpTo(routes.MAIN_MENU) { inclusive = true }
+                    }
+                }, navigateToAddFriend = { navController.navigate(routes.ADD_FRIEND) })
             }
             composable(route = routes.SIGN_UP) {
                 SignUpScreen(
@@ -134,6 +140,9 @@ fun ChatApp(
                         }
                     })
             }
+            composable(route = routes.ADD_FRIEND) {
+                AddFriendScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)})
+            }
         }
 
     }
@@ -142,31 +151,26 @@ fun ChatApp(
 @Composable
 fun CustomTopAppBar(
     currentScreenName: String,
-    navigateToLogin: () -> Unit,
 ) {
-    val loginString = "login" // todo
 
     TransparentSurfaceWithGradient(
-        modifier = Modifier.padding(4.dp), // todo hardcoded
+        modifier = Modifier.fillMaxWidth(),
         alpha = 0.42f,
         brush = selectFromTheme(
             Brush.horizontalGradient(
-                colors = Constants.Gradient.RED_TO_BLACK.reversed(),
+                colors = Constants.Gradient.GREEN_TO_BROWN.reversed(),
             ), Brush.horizontalGradient(
-                colors = Constants.Gradient.BLACK_TO_GRAY.reversed()
+                colors = Constants.Gradient.RED_TO_BLACK.reversed()
             )
         ),
-        border = null
+        border = null,
+        roundedCornerShape = RoundedCornerShape(0.dp)
     ) {
         Row(
             modifier = Modifier
                 .padding(8.dp)
-                .fillMaxWidth()
-                .clickable {
-                    if (currentScreenName != loginString) {
-                        navigateToLogin()
-                    }
-                },
+                .fillMaxWidth(),
+
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {

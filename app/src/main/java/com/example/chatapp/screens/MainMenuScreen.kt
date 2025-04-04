@@ -16,8 +16,8 @@ import com.example.chatapp.viewmodel.MainViewModel
 fun MainMenuScreen(
     viewModel: MainMenuViewModel = hiltViewModel(),
     navigateToLogin: () -> Unit,
+    navigateToAddFriend: () -> Unit,
 ) {
-    Log.d("test24", "IM A FOOOOOOOOOOL")
     val uiState by viewModel.uiState.collectAsState()
     if (!uiState.userIsLogged) {
         navigateToLogin()
@@ -26,5 +26,6 @@ fun MainMenuScreen(
     Row {
         Text("Hello ${uiState.userDetails.name}")
         Button(onClick = {viewModel.signOut()}){Text("sign out")}
+        Button(onClick = {navigateToAddFriend()}) { Text("Add Friend")}
     }
 }
