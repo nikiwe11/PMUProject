@@ -1,15 +1,9 @@
 package com.example.chatapp.ui.theme
 
-import CustomBottomBar
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import CustomTopBar
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,29 +15,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.chatapp.general.Constants
-import com.example.chatapp.general.TransparentSurfaceWithGradient
-import com.example.chatapp.general.selectFromTheme
 import com.example.chatapp.screens.LoginScreen
 import com.example.chatapp.screens.MainMenuScreen
 import com.example.chatapp.R
 import com.example.chatapp.screens.AddFriendScreen
 import com.example.chatapp.screens.ChatScreen
+import com.example.chatapp.screens.FriendProfile
 import com.example.chatapp.screens.ProfileScreen
 import com.example.chatapp.screens.SignUpScreen
 import com.example.chatapp.viewmodel.MainViewModel
@@ -61,7 +47,7 @@ fun ChatApp(
     val currentScreen =
         backStackEntry?.destination?.route ?: routes.REGISTRATION
 
-
+    // TODO: тва да се махне изобщо(?) мисля че седи грозно
     var topAppBarTitle by rememberSaveable { mutableStateOf(R.string.main_menu) }
     if (uiState.showError) {
         AlertDialog(
@@ -76,6 +62,8 @@ fun ChatApp(
         topAppBarTitle = when (currentScreen) {
             routes.MAIN_MENU -> R.string.main_menu
             routes.SIGN_UP -> R.string.sign_up
+            routes.LOGIN->R.string.login
+            routes.ADD_FRIEND->R.string.add_friend
             // todo
 //            routes.REGISTRATION -> R.string.registration
 
@@ -87,7 +75,7 @@ fun ChatApp(
     }
     Scaffold(
         topBar = {
-            CustomTopAppBar(
+            CustomTopBar(
                 currentScreenName = stringResource(topAppBarTitle),
             )
 
@@ -152,58 +140,25 @@ fun ChatApp(
                 AddFriendScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)})
             }
             composable(route = routes.CHAT) {
-                ChatScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)})
+                ChatScreen(
+                    navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)},
+                navigateToFriendProfile = {navController.navigate(routes.CHAT_SETTINGS)})
             }
             composable(route=routes.PROFILE_SETTINGS){
-                ProfileScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)})
+                ProfileScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)},)
+//                    navigateToLogin = {
+//                        navController.navigate(routes.LOGIN,)})
+            }
+            composable (route=routes.CHAT_SETTINGS) {
+                FriendProfile(navigateToChat={navController.navigate(routes.CHAT)})
             }
         }
 
     }
 }
 
-@Composable
-fun ChatScreen() {
-    TODO("Not yet implemented")
-}
 
-@Composable
-fun CustomTopAppBar(
-    currentScreenName: String,
-) {
 
-    TransparentSurfaceWithGradient(
-        modifier = Modifier.fillMaxWidth(),
-        alpha = 0.42f,
-        brush = selectFromTheme(
-            Brush.horizontalGradient(
-                colors = Constants.Gradient.GREEN_TO_BROWN.reversed(),
-            ), Brush.horizontalGradient(
-                colors = Constants.Gradient.RED_TO_BLACK.reversed()
-            )
-        ),
-        border = null,
-        roundedCornerShape = RoundedCornerShape(0.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            val text = currentScreenName
-            Text(
-                modifier = Modifier.alpha(1f), text = text, style = if (text.length < 23) {
-                    MaterialTheme.typography.headlineSmall
-                } else {
-                    MaterialTheme.typography.titleLarge
-                }, textAlign = TextAlign.Center, color = Color.White
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

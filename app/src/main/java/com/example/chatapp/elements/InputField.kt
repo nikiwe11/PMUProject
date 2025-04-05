@@ -18,13 +18,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chatapp.general.Constants
-import com.example.chatapp.general.selectFromTheme
 import com.example.chatapp.R
-
-import com.example.chatapp.ui.theme.ChatAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,17 +35,18 @@ fun InputField(
     labelText: String? = null,
     errorLabel: String = stringResource(R.string.field_cannot_be_empty_warning),
     onFocusLost: () -> Unit = {},
+    containerColor: Color = Color.White,
+    textColor: Color = Color.Black,
+    unfocusedIndicatorColor: Color = Color.Transparent,
+    focusedIndicatorColor: Color = Color.Transparent,
+    unfocusedLabelColor: Color = Color.Black.copy(alpha = 0.75f),
+    focusedLabelColor: Color = Color.Gray,
+    border: BorderStroke? = null,
 ) {
-    var input by rememberSaveable {
-        mutableStateOf("")
-    }
+    var input by rememberSaveable { mutableStateOf("") }
     input = value
-    var inputEntered by rememberSaveable {
-        mutableStateOf(false)
-    }
-    var isFocused by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var inputEntered by rememberSaveable { mutableStateOf(false) }
+    var isFocused by rememberSaveable { mutableStateOf(false) }
 
     TextField(
         modifier = modifier
@@ -59,15 +56,10 @@ fun InputField(
                 }
                 isFocused = focusState.isFocused
             }
-            .let {
-                selectFromTheme(
-                    lightThemeValue = it.border(
-                        border = BorderStroke(
-                            1.dp,
-                            Color.Black
-                        ), shape = RoundedCornerShape(12.dp)
-                    ), darkThemeValue = it
-                )
+            .let { originalModifier ->
+                border?.let {
+                    originalModifier.border(border = it, shape = RoundedCornerShape(12.dp))
+                } ?: originalModifier
             },
         shape = RoundedCornerShape(12.dp),
         value = value,
@@ -89,37 +81,23 @@ fun InputField(
                         input.isEmpty() && inputIsRequired && inputEntered -> stringResource(R.string.field_cannot_be_empty_warning)
                         isError(input) && inputEntered -> errorLabel
                         else -> labelText
-                    }, maxLines = 1, overflow = TextOverflow.Ellipsis
+                    },
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         },
         colors = TextFieldDefaults.textFieldColors(
-            focusedTextColor = Color.Black, // todo watch out for deprecation
-            containerColor = Color.White,
-            unfocusedLabelColor = Color.Black.copy(alpha = 0.75f),
-            focusedIndicatorColor = Color.Transparent, // the line at the bottom (barely visible because of background)
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedLabelColor = Color.Gray,
+            focusedTextColor = textColor,
+            unfocusedTextColor = textColor,
+            containerColor = containerColor,
+            unfocusedLabelColor = unfocusedLabelColor,
+            focusedIndicatorColor = focusedIndicatorColor,
+            unfocusedIndicatorColor = unfocusedIndicatorColor,
+            focusedLabelColor = focusedLabelColor,
             errorLabelColor = Color.Red,
-            cursorColor = Color.Black,
+            cursorColor = textColor,
         ),
         singleLine = true
     )
-}
-
-@Preview
-@Composable
-
-fun Preview() {
-    ChatAppTheme {
-        InputField(
-            modifier = Modifier,
-            value = "",
-            onValueChange = {},
-            keyboardOptions = KeyboardOptions(),
-            regex = Constants.Regex.ONLY_NUMBERS,
-            labelText = "TEXT",
-            errorLabel = "ERROR"
-        )
-    }
 }

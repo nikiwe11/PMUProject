@@ -2,6 +2,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -17,7 +18,7 @@ import androidx.navigation.NavController
 import com.example.chatapp.general.Constants
 import com.example.chatapp.general.TransparentSurfaceWithGradient
 import com.example.chatapp.general.selectFromTheme
-import com.example.chatapp.ui.theme.CustomTopAppBar
+
 
 //package com.example.chatapp.elements
 //
@@ -40,7 +41,7 @@ fun CustomBottomBar(
             Brush.horizontalGradient(colors = Constants.Gradient.RED_TO_BLACK.reversed())
         ),
         border = null,
-        roundedCornerShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+        roundedCornerShape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp)
     ) {
         Row(
             modifier = Modifier
