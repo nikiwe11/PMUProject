@@ -77,11 +77,7 @@ fun AddFriendScreen(
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
             Text("Add friends:")
-            Row {
-                Button(onClick = { navigateToMainMenu() }) {
-                    Text("Add Friend")
-                }
-            }
+
         }
     }
 }

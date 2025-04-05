@@ -61,6 +61,7 @@ fun ChatScreen(
                             modifier = Modifier.padding(horizontal = 3.dp)
                         )
                     }
+                    // TODO: P-to trqa bude zamesteno s profilna  
                     Text(
                         "P" ,
                         style = MaterialTheme.typography.headlineMedium,
