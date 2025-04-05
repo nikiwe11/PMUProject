@@ -1,5 +1,6 @@
 package com.example.chatapp.ui.theme
 
+import CustomBottomBar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,8 @@ import com.example.chatapp.screens.LoginScreen
 import com.example.chatapp.screens.MainMenuScreen
 import com.example.chatapp.R
 import com.example.chatapp.screens.AddFriendScreen
+import com.example.chatapp.screens.ChatScreen
+import com.example.chatapp.screens.ProfileScreen
 import com.example.chatapp.screens.SignUpScreen
 import com.example.chatapp.viewmodel.MainViewModel
 import com.example.chatapp.general.Constants.Routes as routes
@@ -87,6 +90,8 @@ fun ChatApp(
             CustomTopAppBar(
                 currentScreenName = stringResource(topAppBarTitle),
             )
+
+
         }) { innerPadding ->
         val shouldShowDialog = remember { mutableStateOf(false) }
         val postRequestValue = remember { mutableStateOf("") }
@@ -128,7 +133,10 @@ fun ChatApp(
                     navController.navigate(routes.LOGIN) {
                         popUpTo(routes.MAIN_MENU) { inclusive = true }
                     }
-                }, navigateToAddFriend = { navController.navigate(routes.ADD_FRIEND) })
+                }, navigateToAddFriend = { navController.navigate(routes.ADD_FRIEND) },
+                navigateToChat = { navController.navigate(routes.CHAT) },
+                navigateToProfile={navController.navigate(routes.PROFILE_SETTINGS)})
+
             }
             composable(route = routes.SIGN_UP) {
                 SignUpScreen(
@@ -143,9 +151,20 @@ fun ChatApp(
             composable(route = routes.ADD_FRIEND) {
                 AddFriendScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)})
             }
+            composable(route = routes.CHAT) {
+                ChatScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)})
+            }
+            composable(route=routes.PROFILE_SETTINGS){
+                ProfileScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)})
+            }
         }
 
     }
+}
+
+@Composable
+fun ChatScreen() {
+    TODO("Not yet implemented")
 }
 
 @Composable
