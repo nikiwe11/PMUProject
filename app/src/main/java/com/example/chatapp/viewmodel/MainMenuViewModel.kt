@@ -46,7 +46,7 @@ class MainMenuViewModel @Inject constructor(
                         Log.d("test74","friends: $friendsList")
 
                         Log.d("test24", "user:${user}")
-
+                        CurrentUser.id = user!!.id
                         CurrentUser.name = user!!.name
                         CurrentUser.friends = friendsList
                         _uiState.update {
@@ -88,6 +88,7 @@ data class UserDetails(
 )
 
 object CurrentUser {
+    var id: String = ""
     var name: String = ""
     var friends: List<User> = listOf()
 }

@@ -125,7 +125,7 @@ fun ChatApp(
                         popUpTo(routes.MAIN_MENU) { inclusive = true }
                     }
                 }, navigateToAddFriend = { navController.navigate(routes.ADD_FRIEND) },
-                    navigateToChat = { navController.navigate("${ChatDestination.route}/${it}") }, // todo add args
+                    navigateToChat = { navController.navigate("${ChatDestination.route}/${it}") },
                     navigateToProfile = { navController.navigate(routes.PROFILE_SETTINGS) })
 
             }

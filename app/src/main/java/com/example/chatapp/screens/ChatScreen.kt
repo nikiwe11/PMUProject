@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +44,7 @@ fun ChatScreen(
     navigateToFriendProfile: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
 
     Scaffold(
         topBar = {
@@ -89,7 +91,7 @@ fun ChatScreen(
                         )
                     {
                         Text(
-                            text = uiState.user.name,
+                            text = uiState.friendUser.name,
                             style = MaterialTheme.typography.headlineSmall,
                             color = Color.White,
                         )
@@ -102,8 +104,8 @@ fun ChatScreen(
                 // TODO: тряа може да се пише в инпут фиилда
                 InputField(
                     modifier = Modifier.weight(1f),
-                    value = "",
-                    onValueChange = {},
+                    value = uiState.messageDetails.message,
+                    onValueChange = { viewModel.updateUiState(uiState.messageDetails.copy(message = it)) },
                     labelText = "Type here...",
                     containerColor = Color.Transparent,
                     textColor = Color.White,
@@ -113,8 +115,9 @@ fun ChatScreen(
                 )
 
                 // TODO: кат се натисне тряа може да се праща съобщението
+                // todo can use IconButton
                 TextButton(
-                    onClick = { /* No action */ },
+                    onClick = { viewModel.sendMessage() },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = Color.White
                     )
@@ -135,6 +138,10 @@ fun ChatScreen(
         ) {
             // Chat messages content would go here
             LazyColumn(modifier = Modifier.weight(1f)) {
+                items(uiState.messages) { message ->
+                    Text("${viewModel.getSenderName(message)}: ${message.text} ")
+                }
+
                 // Chat items would go here
             }
         }

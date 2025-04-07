@@ -1,28 +1,29 @@
 package com.example.chatapp.data.datasource
 
 import android.util.Log
+import com.example.chatapp.data.model.Chat
+import com.example.chatapp.data.model.Message
 import com.example.chatapp.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.dataObjects
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class UserRemoteDataSource @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun getTodoItems(currentUserIdFlow: Flow<String?>): Flow<List<User>> {
-        return currentUserIdFlow.flatMapLatest { ownerId ->
-            firestore
-                .collection(TODO_ITEMS_COLLECTION)
-                .whereEqualTo(OWNER_ID_FIELD, ownerId)
-                .dataObjects()
-        }
-    }
+//    @OptIn(ExperimentalCoroutinesApi::class)
+//    fun getTodoItems(currentUserIdFlow: Flow<String?>): Flow<List<User>> {
+//        return currentUserIdFlow.flatMapLatest { ownerId ->
+//            firestore
+//                .collection(TODO_ITEMS_COLLECTION)
+//                .whereEqualTo(OWNER_ID_FIELD, ownerId)
+//                .dataObjects()
+//        }
+//    }
     suspend fun searchUserByUsername(name: String): List<User> {
         return try {
             val snapshot = firestore.collection(USER_OWNER)
@@ -70,6 +71,92 @@ class UserRemoteDataSource @Inject constructor(
             Log.e("FirestoreFriend", "Failed to load friends: ${e.message}")
             emptyList()
         }
+    }
+    suspend fun createChat(user1Id: String, user2Id: String): String {
+        val sortedIds = listOf(user1Id, user2Id).sortedDescending()
+        val chat = Chat(
+            id = sortedIds[0]+"_"+sortedIds[1],
+            participantIds = sortedIds, // Sorted to avoid duplicates
+            lastMessage = Message(),
+        )
+
+        // Check if chat already exists
+        val existing = firestore.collection(CHATS)
+            .whereEqualTo("participantIds", chat.participantIds)
+            .get()
+            .await()
+
+        if (!existing.isEmpty) {
+            return existing.documents[0].id // Return existing chat ID
+        }
+
+        // Create new chat
+        val docRef = firestore.collection(CHATS)
+            .document(chat.id) // Use your custom ID
+            .set(chat)         // Save the chat data
+            .await()
+        return chat.id
+    }
+    suspend fun sendMessage(chatId: String, message: Message): String {
+        Log.d("test74","chat id: $chatId and message : $message")
+        val messageRef = firestore
+            .collection(CHATS)
+            .document(chatId)
+            .collection(MESSAGES)
+            .add(message)
+            .await()
+
+        // Optionally update chat metadata
+        firestore.collection(CHATS).document(chatId).update(
+            mapOf(
+                "lastMessage" to message.text,
+            )
+        )
+
+        return messageRef.id
+    }
+    fun listenToMessages(chatId: String): Flow<List<Message>> = callbackFlow {
+        val listener = firestore.collection(CHATS)
+            .document(chatId)
+            .collection(MESSAGES)
+            .orderBy("timeStamp") // assuming you have a timestamp field
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                val messages = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(Message::class.java)?.copy(id = doc.id)
+                } ?: emptyList()
+
+                trySend(messages)
+            }
+
+        awaitClose {
+            listener.remove()
+        }
+    }
+
+    suspend fun getMessages(chatId: String): List<Message> {
+        val snapshot = firestore.collection(CHATS)
+            .document(chatId)
+            .collection(MESSAGES)
+            .orderBy("timeStamp")
+            .get()
+            .await()
+
+        val messages = snapshot.documents.mapNotNull { doc ->
+            val data = doc.data
+            Message(
+                id = doc.id,
+                senderId = data?.get("senderId") as? String ?: "",
+                text = data?.get("text") as? String ?: "",
+                timeStamp = data?.get("timeStamp") as? String ?: ""
+            )
+        }
+        Log.d("test74","all messages: $messages")
+        return messages
     }
     suspend fun getUserData(userId: String): User? {
         Log.d("test24","whhats going on bruv...${userId}")
@@ -126,6 +213,7 @@ class UserRemoteDataSource @Inject constructor(
         private const val USER_OWNER = "userOwner"
         private const val OWNER_ID_FIELD = "ownerId"
         private const val FRIENDS = "friends"
-        private const val TODO_ITEMS_COLLECTION = "todoitems"
+        private const val CHATS = "chats"
+        private const val MESSAGES = "messages"
     }
 }

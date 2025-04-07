@@ -53,6 +53,8 @@ class AddFriendViewModel @Inject constructor(
                 currentUserId = user.id,
                 User(id = firebaseUser.uid,name = CurrentUser.name)
             )
+            // Also create a chat
+            userRepository.createChat(firebaseUser.uid,user.id)
         }
     }
 }
