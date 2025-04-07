@@ -30,14 +30,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.chatapp.viewmodel.CurrentUser
 import com.example.chatapp.viewmodel.MainMenuViewModel
 
 @Composable
 fun ProfileScreen(
     viewModel: MainMenuViewModel = hiltViewModel(),
     navigateToMainMenu: () -> Unit,
-) {
 
+) {
     Scaffold(
         bottomBar = {
             CustomBottomBar {
@@ -70,7 +71,7 @@ fun ProfileScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Profile image placeholder (circular)
+            // Profile image with first letter of username
             Box(
                 modifier = Modifier
                     .size(150.dp)
@@ -82,30 +83,30 @@ fun ProfileScreen(
                     .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Profile picture",
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                Text(
+                    text = CurrentUser.name.take(1).uppercase(),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
+
             Text(
-                text = "Your Name",
+                text = CurrentUser.name,
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
-
             TextButton(
                 onClick = { /* Do nothing for now */ },
                 modifier = Modifier.padding(8.dp)
-            ) {// TODO: тряа се направи да може потребителя да въвежда текст
+            ) {
                 Text(
                     text = "Type your status here",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+
             Spacer(modifier = Modifier.height(24.dp))
 
 

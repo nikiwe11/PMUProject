@@ -1,14 +1,18 @@
 package com.example.chatapp.screens
 
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
@@ -22,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -56,7 +61,6 @@ fun AddFriendScreen(
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     TextButton(
                         onClick = navigateToMainMenu,
                         modifier = Modifier.padding(end = 8.dp),
@@ -71,7 +75,7 @@ fun AddFriendScreen(
                         )
                     }
 
-                    // TODO: тряа може да се пише и да има функционалност
+                    // TODO: да се премахне да добавяш себе си
                     InputField(
                         modifier = Modifier.weight(1f),
                         value = uiState.searchText,
@@ -90,18 +94,33 @@ fun AddFriendScreen(
         Column(modifier = Modifier.padding(padding)) {
             Text("Add friends:")
 
-            LazyColumn(content = {
-
+            LazyColumn {
                 items(uiState.getUsersDisplayed { viewModel.updateList() }) { user ->
-                    Row() {
-                        Text(user.name)
-                        Button(onClick = {
-                            viewModel.addFriend(user)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp, horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        ProfileIcon(name = user.name)
 
-                        }) {Text("Add")} // todo Kris: put icon instead of text (look up IconButton/Icon)
+                        Text(
+                            text = user.name,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 16.dp)
+                        )
+
+                        TextButton(
+                            onClick = { viewModel.addFriend(user)},
+                            colors = ButtonDefaults.textButtonColors(
+                            )
+                        ) {
+                            Text("Add")
+                        }
                     }
                 }
-            })
+            }
         }
     }
 }

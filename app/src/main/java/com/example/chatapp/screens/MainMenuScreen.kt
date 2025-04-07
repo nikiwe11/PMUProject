@@ -34,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -163,12 +164,26 @@ fun MainMenuScreen(
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        LazyRow(content = { // todo Kris: Fix the layout (adding modifier to friendicon should be enough, but be careful where u apply it)
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             items(CurrentUser.friends) { friend ->
-                                FriendIcon(friend = friend, onClick = { navigateToChat(friend.id) })
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.clickable { navigateToChat(friend.id) }
+                                ) {
+                                    ProfileIcon(name = friend.name)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = friend.name,
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                }
                             }
-                        })
+                        }
                     }
+
 
                     // TODO: кат се направят чатовете да се използва за да те изпрати към тях
 //                    ChatItem(
@@ -224,21 +239,18 @@ fun MainMenuScreen(
 }
 
 @Composable
-fun FriendIcon(friend: User,onClick: () -> Unit) {
-    Column {
-
-        Icon(
-            modifier = Modifier
-                .size(48.dp)
-                .background(Color.LightGray, CircleShape)
-                .padding(8.dp)
-                .clickable{ onClick() },
-            imageVector = Icons.Default.Person,
-            contentDescription = "Friend ${friend.name}",
-            tint = Color.DarkGray,
-
+fun ProfileIcon(name: String) {
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceVariant),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = name.take(1).uppercase(),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Text(text = friend.name) // todo should be nickname, display name
     }
-
 }

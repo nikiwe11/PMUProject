@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -31,6 +32,7 @@ fun ChatItem(
     profileIcon: ImageVector,
     name: String,
     lastMessage: String,
+    isLastMessageFromMe: Boolean,
     date: String,
     time: String,
     onClick: () -> Unit
@@ -75,8 +77,10 @@ fun ChatItem(
                     style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
                 )
                 Text(
-                    text = lastMessage,
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.DarkGray)
+                    text = if (isLastMessageFromMe) "You: $lastMessage" else lastMessage,
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.DarkGray),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 

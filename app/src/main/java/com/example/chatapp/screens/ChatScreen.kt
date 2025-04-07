@@ -1,11 +1,18 @@
 package com.example.chatapp.screens
 
 import CustomBottomBar
+import android.R
+import android.R.id.message
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,18 +26,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.chatapp.data.model.Message
+import com.example.chatapp.elements.ChatMessageItem
 import com.example.chatapp.elements.InputField
 import com.example.chatapp.general.Constants
 import com.example.chatapp.general.NavigationDestination
 import com.example.chatapp.general.TransparentSurfaceWithGradient
 import com.example.chatapp.general.selectFromTheme
 import com.example.chatapp.viewmodel.ChatScreenViewModel
+import com.example.chatapp.viewmodel.CurrentUser
+import java.time.format.DateTimeFormatter
 
 object ChatDestination : NavigationDestination {
     override val route = Constants.Routes.CHAT
@@ -80,11 +93,9 @@ fun ChatScreen(
                             modifier = Modifier.padding(horizontal = 3.dp)
                         )
                     }
-                    // TODO: P-to trqa bude zamesteno s profilna  
-                    Text(
-                        "P",
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(horizontal = 3.dp)
+                    // TODO: P-to t rqa bude zamesteno s profilna
+                    ProfileIcon(
+                        name = uiState.friendUser.name
                     )
 
                     TextButton(
@@ -147,13 +158,20 @@ fun ChatScreen(
                 }
 
             }
-            // Chat messages content would go here
-            LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.weight(1f),  // Takes available space
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)  // Space between items
+            ) {
                 items(uiState.messages) { message ->
-                    Text("${viewModel.getSenderName(message)}: ${message.text} ") // todo Kris: moe napravish nqkuv gotin composable za suobshteniqta i da polzvash message propertyta
+                    val isFromCurrentUser = message.senderId == CurrentUser.id
+                    ChatMessageItem(
+                        message = message,
+                        isFromCurrentUser = isFromCurrentUser,
+                        senderName = viewModel.getSenderName(message)
+                    )
                 }
-
-                // Chat items would go here
             }
         }
     }
