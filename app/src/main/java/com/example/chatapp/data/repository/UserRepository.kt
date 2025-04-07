@@ -11,6 +11,10 @@ class UserRepository @Inject constructor(
         return userRemoteDataSource.getUserData(userId)
     }
 
+    suspend fun search(name: String): List<User> {
+        return userRemoteDataSource.searchUserByUsername(name)
+    }
+
     suspend fun createUser(user: User): String {
         return userRemoteDataSource.create(user)
     }

@@ -4,9 +4,7 @@ import android.util.Log
 import com.example.chatapp.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.dataObjects
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -23,6 +21,23 @@ class UserRemoteDataSource @Inject constructor(
                 .collection(TODO_ITEMS_COLLECTION)
                 .whereEqualTo(OWNER_ID_FIELD, ownerId)
                 .dataObjects()
+        }
+    }
+    suspend fun searchUserByUsername(name: String): List<User> {
+        return try {
+            val snapshot = firestore.collection(USER_OWNER)
+                .whereEqualTo("name", name)
+                .get()
+                .await()
+
+            snapshot.documents.mapNotNull { doc ->
+                val name = doc.getString("name") ?: return@mapNotNull null
+                val id = doc.id // or doc.getString("id") if you're storing it in fields
+                User(id = id, name = name)
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreSearch", "Error searching users: ${e.message}")
+            emptyList()
         }
     }
     suspend fun getUserData(userId: String): User? {
