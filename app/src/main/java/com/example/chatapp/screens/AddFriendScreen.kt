@@ -98,7 +98,7 @@ fun AddFriendScreen(
                         Button(onClick = {
                             viewModel.addFriend(user)
 
-                        }) {}
+                        }) {Text("Add")} // todo Kris: put icon instead of text (look up IconButton/Icon)
                     }
                 }
             })

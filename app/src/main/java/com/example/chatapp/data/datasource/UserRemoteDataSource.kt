@@ -53,6 +53,24 @@ class UserRemoteDataSource @Inject constructor(
             Log.e("FirestoreFriend", "Failed to add friend: ${e.message}")
         }
     }
+    suspend fun getFriendsList(userId: String): List<User> {
+        return try {
+            firestore.collection(USER_OWNER)
+                .document(userId)
+                .collection(FRIENDS)
+                .get()
+                .await()
+                .documents
+                .mapNotNull { doc ->
+                    val name = doc.getString("name") ?: return@mapNotNull null
+                    val id = doc.id
+                    User(id = id, name = name)
+                }
+        } catch (e: Exception) {
+            Log.e("FirestoreFriend", "Failed to load friends: ${e.message}")
+            emptyList()
+        }
+    }
     suspend fun getUserData(userId: String): User? {
         Log.d("test24","whhats going on bruv...${userId}")
         val snapshot = firestore.collection(USER_OWNER).document(userId).get().await()

@@ -35,18 +35,23 @@ class MainMenuViewModel @Inject constructor(
             Log.d("test24", "fool! +${authRepository.currentUser}")
             var user: User? = null
             try {
+
                 viewModelScope.launch {
                     user = userRepository.getUser(firebaseUser.uid)
                     if (user == null) {
                         Log.d("test24", "failed to get user")
                         // error
                     } else {
-                        Log.d("test24", "user:${user}")
-                        _uiState.update {
-                            it.copy(userDetails = user!!.toUserDetails(), userIsLogged = true)
-                        }
-                        CurrentUser.name = user!!.name
+                        val friendsList: List<User> = userRepository.getFriendsList(user!!.id)
+                        Log.d("test74","friends: $friendsList")
 
+                        Log.d("test24", "user:${user}")
+
+                        CurrentUser.name = user!!.name
+                        CurrentUser.friends = friendsList
+                        _uiState.update {
+                            it.copy(userDetails = user!!.toUserDetails(), userIsLogged = true, loading = false)
+                        }
                     }
                 }
 
@@ -74,6 +79,7 @@ fun User.toUserDetails(): UserDetails {
 
 data class MainMenuUiState(
     val userIsLogged: Boolean = true,
+    val loading: Boolean = true,
     val userDetails: UserDetails = UserDetails(),
 )
 
@@ -83,4 +89,5 @@ data class UserDetails(
 
 object CurrentUser {
     var name: String = ""
+    var friends: List<User> = listOf()
 }

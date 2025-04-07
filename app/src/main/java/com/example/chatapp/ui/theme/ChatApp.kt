@@ -20,14 +20,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.chatapp.screens.LoginScreen
 import com.example.chatapp.screens.MainMenuScreen
 import com.example.chatapp.R
 import com.example.chatapp.screens.AddFriendScreen
+import com.example.chatapp.screens.ChatDestination
 import com.example.chatapp.screens.ChatScreen
 import com.example.chatapp.screens.FriendProfile
 import com.example.chatapp.screens.ProfileScreen
@@ -62,8 +65,8 @@ fun ChatApp(
         topAppBarTitle = when (currentScreen) {
             routes.MAIN_MENU -> R.string.main_menu
             routes.SIGN_UP -> R.string.sign_up
-            routes.LOGIN->R.string.login
-            routes.ADD_FRIEND->R.string.add_friend
+            routes.LOGIN -> R.string.login
+            routes.ADD_FRIEND -> R.string.add_friend
             // todo
 //            routes.REGISTRATION -> R.string.registration
 
@@ -75,9 +78,9 @@ fun ChatApp(
     }
     Scaffold(
         topBar = {
-            CustomTopBar(
-                currentScreenName = stringResource(topAppBarTitle),
-            )
+//            CustomTopBar(
+//                currentScreenName = stringResource(topAppBarTitle),
+//            )
 
 
         }) { innerPadding ->
@@ -97,7 +100,7 @@ fun ChatApp(
 //                        }
 //                    }
 //        }
-        // Background (can set different color)
+        //  Background (can set different color) todo Kris: Surface(modifier = Modifier.fillMaxSize(),color = todo )
         Surface(modifier = Modifier.fillMaxSize()) {
 
         }
@@ -122,8 +125,8 @@ fun ChatApp(
                         popUpTo(routes.MAIN_MENU) { inclusive = true }
                     }
                 }, navigateToAddFriend = { navController.navigate(routes.ADD_FRIEND) },
-                navigateToChat = { navController.navigate(routes.CHAT) },
-                navigateToProfile={navController.navigate(routes.PROFILE_SETTINGS)})
+                    navigateToChat = { navController.navigate("${ChatDestination.route}/${it}") }, // todo add args
+                    navigateToProfile = { navController.navigate(routes.PROFILE_SETTINGS) })
 
             }
             composable(route = routes.SIGN_UP) {
@@ -137,27 +140,31 @@ fun ChatApp(
                     })
             }
             composable(route = routes.ADD_FRIEND) {
-                AddFriendScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)})
+                AddFriendScreen(navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) })
             }
-            composable(route = routes.CHAT) {
+            composable(
+                route = ChatDestination.routeWithArgs, arguments = listOf(
+                    navArgument(ChatDestination.chatIdArg) {
+                        type = NavType.StringType
+                    }
+                )
+            ) {
                 ChatScreen(
-                    navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)},
-                navigateToFriendProfile = {navController.navigate(routes.CHAT_SETTINGS)})
+                    navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) },
+                    navigateToFriendProfile = { navController.navigate(routes.CHAT_SETTINGS) })
             }
-            composable(route=routes.PROFILE_SETTINGS){
-                ProfileScreen(navigateToMainMenu = {navController.navigate(routes.MAIN_MENU)},)
+            composable(route = routes.PROFILE_SETTINGS) {
+                ProfileScreen(navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) })
 //                    navigateToLogin = {
 //                        navController.navigate(routes.LOGIN,)})
             }
-            composable (route=routes.CHAT_SETTINGS) {
-                FriendProfile(navigateToChat={navController.navigate(routes.CHAT)})
+            composable(route = routes.CHAT_SETTINGS) {
+                FriendProfile(navigateToChat = { navController.navigate(routes.CHAT) })
             }
         }
 
     }
 }
-
-
 
 
 @Preview(showBackground = true)

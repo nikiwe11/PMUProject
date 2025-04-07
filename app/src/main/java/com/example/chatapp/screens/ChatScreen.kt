@@ -14,21 +14,36 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chatapp.elements.InputField
 import com.example.chatapp.general.Constants
+import com.example.chatapp.general.NavigationDestination
 import com.example.chatapp.general.TransparentSurfaceWithGradient
 import com.example.chatapp.general.selectFromTheme
+import com.example.chatapp.viewmodel.ChatScreenViewModel
+
+object ChatDestination : NavigationDestination {
+    override val route = Constants.Routes.CHAT
+    override val titleRes = 3
+    const val chatIdArg: String = "chatId"
+    val routeWithArgs = "${route}/{$chatIdArg}"
+}
 
 @Composable
 fun ChatScreen(
+    viewModel: ChatScreenViewModel = hiltViewModel(),
     navigateToMainMenu: () -> Unit,
-    navigateToFriendProfile:() -> Unit,
+    navigateToFriendProfile: () -> Unit,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             TransparentSurfaceWithGradient(
@@ -63,20 +78,21 @@ fun ChatScreen(
                     }
                     // TODO: P-to trqa bude zamesteno s profilna  
                     Text(
-                        "P" ,
+                        "P",
                         style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.padding(horizontal = 3.dp)
                     )
 
                     TextButton(
-                        onClick =navigateToFriendProfile,
+                        onClick = navigateToFriendProfile,
 
-                    )
-                    {Text(
-                        text = "Penka Penova",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = Color.White,
-                    )
+                        )
+                    {
+                        Text(
+                            text = uiState.user.name,
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = Color.White,
+                        )
                     }
                 }
             }
@@ -112,9 +128,10 @@ fun ChatScreen(
             }
         }
     ) { padding ->
-        Column(modifier = Modifier
-            .padding(padding)
-            .fillMaxSize()
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
         ) {
             // Chat messages content would go here
             LazyColumn(modifier = Modifier.weight(1f)) {

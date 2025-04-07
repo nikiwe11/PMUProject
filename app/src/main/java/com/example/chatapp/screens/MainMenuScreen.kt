@@ -2,6 +2,7 @@ package com.example.chatapp.screens
 
 import CustomBottomBar
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,12 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -35,10 +39,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.chatapp.data.model.User
 import com.example.chatapp.elements.ChatItem
 import com.example.chatapp.general.Constants
 import com.example.chatapp.general.TransparentSurfaceWithGradient
 import com.example.chatapp.general.selectFromTheme
+import com.example.chatapp.viewmodel.CurrentUser
 import com.example.chatapp.viewmodel.MainMenuViewModel
 
 @Composable
@@ -46,172 +52,193 @@ fun MainMenuScreen(
     viewModel: MainMenuViewModel = hiltViewModel(),
     navigateToLogin: () -> Unit,
     navigateToAddFriend: () -> Unit,
-    navigateToChat: () -> Unit,
-    navigateToProfile: () -> Unit
+    navigateToChat: (String) -> Unit,
+    navigateToProfile: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    if (!uiState.userIsLogged) {
+
+    val isLoading = true
+
+    if (!uiState.userIsLogged) { // todo Niki: vseki put proverqva za usera i gubi vreme
         navigateToLogin()
     }
-
-    Scaffold(
-        topBar = {
-            TransparentSurfaceWithGradient(
-                modifier = Modifier.fillMaxWidth(),
-                alpha = 0.42f,
-                brush = selectFromTheme(
-                    Brush.horizontalGradient(colors = Constants.Gradient.GREEN_TO_BROWN.reversed()),
-                    Brush.horizontalGradient(colors = Constants.Gradient.RED_TO_BLACK.reversed())
-                ),
-                border = null,
-                roundedCornerShape = RoundedCornerShape(0.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+    if (uiState.loading) {
+        CircularProgressIndicator() // todo Kris: sloji ekran dokato se jurka logvaneto na usera tuk
+    } else {
+        Scaffold(
+            topBar = {
+                TransparentSurfaceWithGradient(
+                    modifier = Modifier.fillMaxWidth(),
+                    alpha = 0.42f,
+                    brush = selectFromTheme(
+                        Brush.horizontalGradient(colors = Constants.Gradient.GREEN_TO_BROWN.reversed()),
+                        Brush.horizontalGradient(colors = Constants.Gradient.RED_TO_BLACK.reversed())
+                    ),
+                    border = null,
+                    roundedCornerShape = RoundedCornerShape(0.dp)
                 ) {
-
-
-                    // Left side (empty for now or add back button if needed)
-                    Spacer(modifier = Modifier.width(48.dp))
-
-                    // Center title
-
-                    // Right side - Add button
-                    TextButton(
-                        onClick = navigateToAddFriend,
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = Color.White
-                        )
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            "Add",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+
+
+                        // Left side (empty for now or add back button if needed)
+                        Spacer(modifier = Modifier.width(48.dp))
+
+                        // Center title
+
+                        // Right side - Add button
+                        TextButton(
+                            onClick = navigateToAddFriend,
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text(
+                                "Add",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
                     }
                 }
-            }
-        },
-        bottomBar = {
-            CustomBottomBar {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        // TODO: да се добави бейсик ахх чат иконка
-                        text = "Chats",
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    // TODO: да се добави иконка за профил, било то дефалтна или избрана от човека
-                    TextButton(onClick = { navigateToProfile() }) {
-                        Text(
-                            text = "Profile",
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
-        }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Friends label
-                Text(
-                    text = "Friends:",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-
-                // Icons row
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    repeat(5) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Friend $it",
-                            tint = Color.DarkGray,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .background(Color.LightGray, CircleShape)
-                                .padding(8.dp)
-                        )
-                    }
-                }
-
-                // TODO: кат се направят чатовете да се използва за да те изпрати към тях
-                ChatItem(
-                    profileIcon = Icons.Default.Person,
-                    name = "Иванка",
-                    lastMessage = "Zdravei!!",
-                    date = "Днес",
-                    time = "12:34",
-                    onClick = { navigateToChat() }
-                )
-
-                ChatItem(
-                    profileIcon = Icons.Default.Person,
-                    name = "Гошо",
-                    lastMessage = "Как си xD",
-                    date = "20/10/2024",
-                    time = "11:10",
-                    onClick = { navigateToChat() }
-                )
-
-                // TODO: кат се направят чатовете да се използва за да те изпрати към тях
-                Button(
-                    onClick = { navigateToChat() },
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(top = 8.dp)
-                ) {
-                    Text("Chat")
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    // TODO: trqa se mahne sign out butona i da ide na ProfileScreen
-                    Button(
-                        onClick = { viewModel.signOut() },
+            },
+            bottomBar = {
+                CustomBottomBar {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp)
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("sign out")
+                        Text(
+                            // TODO: да се добави бейсик ахх чат иконка
+                            text = "Chats",
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        // TODO: да се добави иконка за профил, било то дефалтна или избрана от човека
+                        TextButton(onClick = { navigateToProfile() }) {
+                            Text(
+                                text = "Profile",
+                                modifier = Modifier.padding(horizontal = 8.dp),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
+            }
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Friends label
+                    Text(
+                        text = "Friends:",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+
+                    // Icons row
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        LazyRow(content = { // todo Kris: Fix the layout (adding modifier to friendicon should be enough, but be careful where u apply it)
+                            items(CurrentUser.friends) { friend ->
+                                FriendIcon(friend = friend, onClick = { navigateToChat(friend.id) })
+                            }
+                        })
+                    }
+
+                    // TODO: кат се направят чатовете да се използва за да те изпрати към тях
+//                    ChatItem(
+//                        profileIcon = Icons.Default.Person,
+//                        name = "Иванка",
+//                        lastMessage = "Zdravei!!",
+//                        date = "Днес",
+//                        time = "12:34",
+//                        onClick = { navigateToChat() }
+//                    )
+//
+//                    ChatItem(
+//                        profileIcon = Icons.Default.Person,
+//                        name = "Гошо",
+//                        lastMessage = "Как си xD",
+//                        date = "20/10/2024",
+//                        time = "11:10",
+//                        onClick = { navigateToChat() }
+//                    )
+
+                    // TODO: кат се направят чатовете да се използва за да те изпрати към тях
+//                    Button(
+//                        onClick = { navigateToChat() },
+//                        modifier = Modifier
+//                            .align(Alignment.Start)
+//                            .padding(top = 8.dp)
+//                    ) {
+//                        Text("Chat")
+//                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // TODO: trqa se mahne sign out butona i da ide na ProfileScreen
+                        Button(
+                            onClick = { viewModel.signOut() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        ) {
+                            Text("sign out")
+                        }
                     }
                 }
             }
         }
     }
+
+}
+
+@Composable
+fun FriendIcon(friend: User,onClick: () -> Unit) {
+    Column {
+
+        Icon(
+            modifier = Modifier
+                .size(48.dp)
+                .background(Color.LightGray, CircleShape)
+                .padding(8.dp)
+                .clickable{ onClick() },
+            imageVector = Icons.Default.Person,
+            contentDescription = "Friend ${friend.name}",
+            tint = Color.DarkGray,
+
+        )
+        Text(text = friend.name) // todo should be nickname, display name
+    }
+
 }
