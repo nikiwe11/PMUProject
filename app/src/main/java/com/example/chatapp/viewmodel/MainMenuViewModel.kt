@@ -18,47 +18,55 @@ import javax.inject.Inject
 @HiltViewModel
 class MainMenuViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MainMenuUiState())
     val uiState: StateFlow<MainMenuUiState> = _uiState.asStateFlow()
 
-    init{
+    init {
         loadCurrentUser()
     }
-    fun loadCurrentUser(){
+
+    fun loadCurrentUser() {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
-        if(firebaseUser == null){
+        if (firebaseUser == null) {
             _uiState.update { it.copy(userIsLogged = false) }
-        }
-        else {
-            Log.d("test24","fool! +${authRepository.currentUser}")
+        } else {
+            Log.d("test24", "fool! +${authRepository.currentUser}")
             var user: User? = null
             try {
                 viewModelScope.launch {
                     user = userRepository.getUser(firebaseUser.uid)
                     if (user == null) {
-                        Log.d("test24","failed to get user")
+                        Log.d("test24", "failed to get user")
                         // error
                     } else {
-                        Log.d("test24","user:${user}")
-                        _uiState.update { it.copy(userDetails = user!!.toUserDetails(), userIsLogged = true) }
+                        Log.d("test24", "user:${user}")
+                        _uiState.update {
+                            it.copy(userDetails = user!!.toUserDetails(), userIsLogged = true)
+                        }
+                        CurrentUser.name = user!!.name
+
                     }
                 }
 
-            } catch (e: Exception){
-                Log.d("test24","you found it u dumb payaso $e.user = ${authRepository.currentUser}")
+            } catch (e: Exception) {
+                Log.d(
+                    "test24",
+                    "you found it u dumb payaso $e.user = ${authRepository.currentUser}"
+                )
             }
 
         }
     }
-    fun signOut(){
+
+    fun signOut() {
         authRepository.signOut()
         _uiState.update { it.copy(userIsLogged = false) }
     }
 }
 
-fun User.toUserDetails() : UserDetails {
+fun User.toUserDetails(): UserDetails {
     return UserDetails(
         name = name
     )
@@ -68,6 +76,11 @@ data class MainMenuUiState(
     val userIsLogged: Boolean = true,
     val userDetails: UserDetails = UserDetails(),
 )
+
 data class UserDetails(
-    val name: String = ""
+    val name: String = "",
 )
+
+object CurrentUser {
+    var name: String = ""
+}

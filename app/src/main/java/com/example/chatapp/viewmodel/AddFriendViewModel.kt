@@ -6,6 +6,7 @@ import com.example.chatapp.data.model.User
 import com.example.chatapp.data.repository.AuthRepository
 import com.example.chatapp.data.repository.UserRepository
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,8 +40,20 @@ class AddFriendViewModel @Inject constructor(
         }
     }
 
-    fun addFriend(){
-
+    fun addFriend(user: User) {
+        viewModelScope.launch {
+            // add the friend by this user
+            val firebaseUser = FirebaseAuth.getInstance().currentUser
+            userRepository.addFriend(
+                currentUserId = firebaseUser!!.uid,
+                User(id = user.id, name = user.name)
+            )
+            // this user is added by the friend afterwards
+            userRepository.addFriend(
+                currentUserId = user.id,
+                User(id = firebaseUser.uid,name = CurrentUser.name)
+            )
+        }
     }
 }
 

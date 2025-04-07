@@ -10,6 +10,9 @@ class UserRepository @Inject constructor(
     suspend fun getUser(userId: String): User? {
         return userRemoteDataSource.getUserData(userId)
     }
+    suspend fun addFriend(currentUserId: String, friend: User) {
+        return userRemoteDataSource.addFriend(currentUserId,friend)
+    }
 
     suspend fun search(name: String): List<User> {
         return userRemoteDataSource.searchUserByUsername(name)

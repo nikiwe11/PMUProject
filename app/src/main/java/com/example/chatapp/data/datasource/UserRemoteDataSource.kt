@@ -40,6 +40,19 @@ class UserRemoteDataSource @Inject constructor(
             emptyList()
         }
     }
+    suspend fun addFriend(currentUserId: String, friend: User) {
+        try {
+            firestore.collection(USER_OWNER)
+                .document(currentUserId)
+                .collection(FRIENDS)
+                .document(friend.id)
+                .set(friend)
+                .await()
+            Log.d("FirestoreFriend", "Added ${friend.name} as friend.")
+        } catch (e: Exception) {
+            Log.e("FirestoreFriend", "Failed to add friend: ${e.message}")
+        }
+    }
     suspend fun getUserData(userId: String): User? {
         Log.d("test24","whhats going on bruv...${userId}")
         val snapshot = firestore.collection(USER_OWNER).document(userId).get().await()
@@ -94,6 +107,7 @@ class UserRemoteDataSource @Inject constructor(
     companion object {
         private const val USER_OWNER = "userOwner"
         private const val OWNER_ID_FIELD = "ownerId"
+        private const val FRIENDS = "friends"
         private const val TODO_ITEMS_COLLECTION = "todoitems"
     }
 }

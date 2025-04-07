@@ -95,7 +95,10 @@ fun AddFriendScreen(
                 items(uiState.getUsersDisplayed { viewModel.updateList() }) { user ->
                     Row() {
                         Text(user.name)
-                        Button(onClick = {viewModel.addFriend()}){}
+                        Button(onClick = {
+                            viewModel.addFriend(user)
+
+                        }) {}
                     }
                 }
             })
