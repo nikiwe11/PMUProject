@@ -90,7 +90,7 @@ fun MainMenuScreen(
                         Spacer(modifier = Modifier.width(48.dp))
 
                         // Center title
-
+                        Text(CurrentUser.name)
                         // Right side - Add button
                         TextButton(
                             onClick = navigateToAddFriend,

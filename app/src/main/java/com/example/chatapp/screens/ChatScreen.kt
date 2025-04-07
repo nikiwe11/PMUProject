@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -136,10 +138,19 @@ fun ChatScreen(
                 .padding(padding)
                 .fillMaxSize()
         ) {
+            val listState = rememberLazyListState()
+            LaunchedEffect(uiState.messages.size) {
+                // Scroll to the last item whenever the list size changes
+                val size = uiState.messages.size
+                if(size > 0){
+                    listState.animateScrollToItem(uiState.messages.size - 1)
+                }
+
+            }
             // Chat messages content would go here
-            LazyColumn(modifier = Modifier.weight(1f)) {
+            LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
                 items(uiState.messages) { message ->
-                    Text("${viewModel.getSenderName(message)}: ${message.text} ")
+                    Text("${viewModel.getSenderName(message)}: ${message.text} ") // todo Kris: moe napravish nqkuv gotin composable za suobshteniqta i da polzvash message propertyta
                 }
 
                 // Chat items would go here

@@ -40,6 +40,7 @@ class MainMenuViewModel @Inject constructor(
                     user = userRepository.getUser(firebaseUser.uid)
                     if (user == null) {
                         Log.d("test24", "failed to get user")
+                        _uiState.update { it.copy(userIsLogged = false) }
                         // error
                     } else {
                         val friendsList: List<User> = userRepository.getFriendsList(user!!.id)

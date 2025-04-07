@@ -169,7 +169,7 @@ class UserRemoteDataSource @Inject constructor(
             Log.d("test24","name:$name,id:$id")
             return User(id = id,name = name)
         }
-        return User(id = "1",name = "guz")
+        return User(id = "1",name = "failed to get user")
     }
     suspend fun create(user: User): String {
         try {
