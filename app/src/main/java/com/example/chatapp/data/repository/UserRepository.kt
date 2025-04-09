@@ -28,7 +28,9 @@ class UserRepository @Inject constructor(
     suspend fun sendMessage(chatId: String, message: Message): String {
         return userRemoteDataSource.sendMessage(chatId, message)
     }
-
+    suspend fun getMessagesBatch(chatId: String, limit: Long, startAfterTimestamp: String?): List<Message> {
+        return userRemoteDataSource.getMessagesBatch(chatId, limit, startAfterTimestamp)
+    }
     suspend fun getMessages(chatId: String): List<Message> {
         return userRemoteDataSource.getMessages(chatId)
     }

@@ -12,12 +12,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,8 +27,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -117,6 +121,7 @@ fun ChatScreen(
                 // TODO: тряа може да се пише в инпут фиилда
                 InputField(
                     modifier = Modifier.weight(1f),
+                    inputIsRequired = false,
                     value = uiState.messageDetails.message,
                     onValueChange = { viewModel.updateUiState(uiState.messageDetails.copy(message = it)) },
                     labelText = "Type here...",
@@ -130,6 +135,7 @@ fun ChatScreen(
                 // TODO: кат се натисне тряа може да се праща съобщението
                 // todo can use IconButton
                 TextButton(
+                    enabled = uiState.messageDetails.message.isNotEmpty(),
                     onClick = { viewModel.sendMessage() },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = Color.White
@@ -150,27 +156,57 @@ fun ChatScreen(
                 .fillMaxSize()
         ) {
             val listState = rememberLazyListState()
-            LaunchedEffect(uiState.messages.size) {
-                // Scroll to the last item whenever the list size changes
-                val size = uiState.messages.size
-                if(size > 0){
-                    listState.animateScrollToItem(uiState.messages.size - 1)
-                }
 
+
+            LaunchedEffect(Unit) {
+                snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                    .collect { index ->
+                        val lastIndex = uiState.messages.lastIndex
+                        if (index == lastIndex && !uiState.isLoadingMore) {
+                            viewModel.loadMoreMessages()
+                        }
+                    }
+            }
+            LaunchedEffect(uiState.shouldScrollToBottom) {
+                if (uiState.shouldScrollToBottom) {
+                    val lastIndex = uiState.messages.lastIndex
+                    if (lastIndex >= 0) {
+                        listState.animateScrollToItem(0) // reversed layout => newest is at index 0
+                    }
+                    viewModel.resetScrollFlag()
+                }
             }
             LazyColumn(
                 state = listState,
+                reverseLayout = true, // Newest message at the bottom
                 modifier = Modifier.weight(1f),  // Takes available space
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)  // Space between items
             ) {
-                items(uiState.messages) { message ->
+
+                items(uiState.messages.reversed()) { message ->
                     val isFromCurrentUser = message.senderId == CurrentUser.id
                     ChatMessageItem(
-                        message = message,
+                        message = message,// todo Kris: smenih timestamp formata na message i sega e stranno, vij kak da e po-normalno
                         isFromCurrentUser = isFromCurrentUser,
                         senderName = viewModel.getSenderName(message)
                     )
+                }
+                // Loading indicator at the "top" (bottom of list in reverse layout)
+                if (uiState.isLoadingMore) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -30,6 +30,8 @@ class ChatScreenViewModel @Inject constructor(
 
     private val userId: String? = savedStateHandle[ChatDestination.chatIdArg]
     var chatId = ""
+    private var lastMessageTimestamp: String? = null
+    private val messagesPerPage = 20
 
     init {
 
@@ -45,7 +47,8 @@ class ChatScreenViewModel @Inject constructor(
                     chatId = chatIds[0] + "_" + chatIds[1]
 
                     _uiState.update { it.copy(friendUser = user, chatId = chatId) }
-                    observeMessages()
+                    loadInitialMessages()
+                    observeNewMessages()
                 } else {
                     Log.d("test74", "cant get user!")
                 }
@@ -55,14 +58,19 @@ class ChatScreenViewModel @Inject constructor(
 
     }
 
-    private fun observeMessages() {
+    fun observeNewMessages() {
         viewModelScope.launch {
-            userRepository.listenToMessages(uiState.value.chatId)
-                .collect { messages ->
-                    _uiState.update { current ->
-                        current.copy(messages = messages)
+            userRepository.listenToMessages(chatId).collect { newMessages ->
+                val existingIds = uiState.value.messages.map { it.id }.toSet()
+                val filtered = newMessages.filterNot { existingIds.contains(it.id) }
+                if (filtered.isNotEmpty()) {
+
+                    _uiState.update {
+                        val updatedMessages = (it.messages + filtered).sortedBy { msg -> msg.timeStamp }
+                        it.copy(messages = updatedMessages)
                     }
                 }
+            }
         }
     }
 
@@ -71,8 +79,37 @@ class ChatScreenViewModel @Inject constructor(
             val messages = userRepository.getMessages(uiState.value.chatId)
             _uiState.update { it.copy(messages = messages) }
         }
+    }
+    fun loadInitialMessages() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingMore = true) }
+            val messages = userRepository.getMessagesBatch(chatId, messagesPerPage.toLong(), null)
+            if (messages.isNotEmpty()) {
+                lastMessageTimestamp = messages.last().timeStamp
+                _uiState.update {
+                    it.copy(
+                        messages = messages.reversed(), // oldest at top
+                        shouldScrollToBottom = true      // 👈 Trigger scroll on first load
+                    )
+                }
+            }
+            _uiState.update { it.copy(isLoadingMore = false) }
+        }
+    }
+    fun loadMoreMessages() {
+        if (uiState.value.isLoadingMore || lastMessageTimestamp == null) return
 
-
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingMore = true) }
+            val olderMessages = userRepository.getMessagesBatch(chatId, messagesPerPage.toLong(), lastMessageTimestamp)
+            if (olderMessages.isNotEmpty()) {
+                lastMessageTimestamp = olderMessages.last().timeStamp
+                _uiState.update {
+                    it.copy(messages = olderMessages.reversed() + it.messages)
+                }
+            }
+            _uiState.update { it.copy(isLoadingMore = false) }
+        }
     }
 
     fun updateUiState(messageDetails: MessageDetails) {
@@ -90,7 +127,7 @@ class ChatScreenViewModel @Inject constructor(
 
 
     fun sendMessage() {
-        val timeStamp = LocalDate.now().toString() + LocalTime.now().toString()
+        val timeStamp = java.time.Instant.now().toString()
         viewModelScope.launch {
             userRepository.sendMessage(
                 uiState.value.chatId,
@@ -105,12 +142,17 @@ class ChatScreenViewModel @Inject constructor(
 
         }
         // Clear input field
-        _uiState.update { it.copy(messageDetails = MessageDetails()) }
+        _uiState.update { it.copy(messageDetails = MessageDetails(), shouldScrollToBottom = true) }
 
+    }
+    fun resetScrollFlag() {
+        _uiState.update { it.copy(shouldScrollToBottom = false) }
     }
 }
 
 data class ChatUiState(
+    val isLoadingMore: Boolean = false,
+    val shouldScrollToBottom: Boolean = true,
     val chatId: String = "",
     val messageDetails: MessageDetails = MessageDetails(),
     val friendUser: User = User(),

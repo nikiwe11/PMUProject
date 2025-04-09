@@ -137,6 +137,29 @@ class UserRemoteDataSource @Inject constructor(
             listener.remove()
         }
     }
+    suspend fun getMessagesBatch(
+        chatId: String,
+        limit: Long = 20,
+        startAfterTimestamp: String? = null
+    ): List<Message> {
+        val query = firestore.collection(CHATS)
+            .document(chatId)
+            .collection(MESSAGES)
+            .orderBy("timeStamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .limit(limit)
+
+        val finalQuery = if (startAfterTimestamp != null) {
+            query.startAfter(startAfterTimestamp)
+        } else {
+            query
+        }
+
+        val snapshot = finalQuery.get().await()
+
+        return snapshot.documents.mapNotNull { doc ->
+            doc.toObject(Message::class.java)?.copy(id = doc.id)
+        }
+    }
 
     suspend fun getMessages(chatId: String): List<Message> {
         val snapshot = firestore.collection(CHATS)
