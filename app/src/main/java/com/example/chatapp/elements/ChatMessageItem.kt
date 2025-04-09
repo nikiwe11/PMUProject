@@ -24,6 +24,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.chatapp.data.model.Message
 import com.example.chatapp.viewmodel.CurrentUser
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ChatMessageItem(
@@ -76,14 +79,13 @@ fun ChatMessageItem(
 
                         val formattedDateTime = remember(message.timeStamp) {
                             try {
-                                val datePart = message.timeStamp.take(10)
-                                val timePart = message.timeStamp.substring(10).take(5)
-                                "$datePart $timePart "
+                                val utcDateTime = OffsetDateTime.parse(message.timeStamp)
+                                val localDateTime = utcDateTime.atZoneSameInstant(ZoneId.systemDefault())
+                                localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
                             } catch (e: Exception) {
-                                "00:00 0000-00-00"
+                                "0000-00-00 00:00"
                             }
                         }
-
                         Text(
                             text = formattedDateTime,
                             style = MaterialTheme.typography.labelSmall,
