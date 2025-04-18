@@ -200,25 +200,26 @@ fun MainMenuScreen(
                             }
                         }
                     }
-                    LazyColumn (content = {
+                    LazyColumn(content = {
                         Log.d("GoshoC","Friends=${CurrentUser.friends}")
                         items(CurrentUser.friends) { friend ->
                             val chat = viewModel.getChatByFriendId(friend.id)
                             if(chat!=null){
+                                // Determine if the last message was sent by me
+                                val isLastMessageFromMe = chat.lastMessage.senderId == CurrentUser.id
+
                                 ChatItem(
                                     profileIcon = Icons.Default.Person,
                                     name = friend.name,
-                                    lastMessage = chat.lastMessage.text,
+                                    lastMessage = chat.lastMessage.text,  // Pass the original message text
                                     date = chat.lastMessage.timeStamp,
-                                    isLastMessageFromMe = false,
+                                    isLastMessageFromMe = isLastMessageFromMe,  // Let ChatItem handle the "You" prefix
                                     time = chat.lastMessage.timeStamp,
                                     onClick = { navigateToChat(friend.id) }
                                 )
                             }
-
                         }
                     })
-
 
                     // TODO: кат се направят чатовете да се използва за да те изпрати към тях
 //                    ChatItem(
