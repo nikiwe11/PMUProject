@@ -1,6 +1,5 @@
 package com.example.chatapp.ui.theme
 
-import CustomTopBar
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -16,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -26,13 +24,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.chatapp.screens.LoginScreen
-import com.example.chatapp.screens.MainMenuScreen
 import com.example.chatapp.R
 import com.example.chatapp.screens.AddFriendScreen
 import com.example.chatapp.screens.ChatDestination
 import com.example.chatapp.screens.ChatScreen
 import com.example.chatapp.screens.FriendProfile
+import com.example.chatapp.screens.LoginScreen
+import com.example.chatapp.screens.MainMenuScreen
 import com.example.chatapp.screens.ProfileScreen
 import com.example.chatapp.screens.SignUpScreen
 import com.example.chatapp.viewmodel.MainViewModel

@@ -1,6 +1,7 @@
 package com.example.chatapp.data.repository
 
 import com.example.chatapp.data.datasource.UserRemoteDataSource
+import com.example.chatapp.data.model.Chat
 import com.example.chatapp.data.model.Message
 import com.example.chatapp.data.model.User
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,9 @@ class UserRepository @Inject constructor(
 
     suspend fun createChat(user1Id: String, user2Id: String): String {
         return userRemoteDataSource.createChat(user1Id, user2Id)
+    }
+    suspend fun getChat(user1Id: String, user2Id: String) : Chat? {
+        return userRemoteDataSource.getChat(user1Id = user1Id,user2Id=user2Id)
     }
 
     suspend fun sendMessage(chatId: String, message: Message): String {
