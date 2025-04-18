@@ -1,6 +1,8 @@
 package com.example.chatapp.screens
 
 import CustomBottomBar
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 
@@ -38,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +51,8 @@ import com.example.chatapp.general.TransparentSurfaceWithGradient
 import com.example.chatapp.general.selectFromTheme
 import com.example.chatapp.viewmodel.CurrentUser
 import com.example.chatapp.viewmodel.MainMenuViewModel
+import com.example.chatapp.R
+import java.util.concurrent.locks.Lock
 
 @Composable
 fun MainMenuScreen(
@@ -85,11 +90,13 @@ fun MainMenuScreen(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
+
                     ) {
 
-
-                        // Left side (empty for now or add back button if needed)
-                        Spacer(modifier = Modifier.width(48.dp))
+                        Image(
+                            painter= painterResource(R.drawable.chat_time_icon),
+                            contentDescription = null
+                        )
 
                         // Center title
                         Text(CurrentUser.name)
@@ -183,6 +190,7 @@ fun MainMenuScreen(
                         }
                     }
                     LazyColumn (content = {
+                        Log.d("GoshoC","Friends=${CurrentUser.friends}")
                         items(CurrentUser.friends) { friend ->
                             val chat = viewModel.getChatByFriendId(friend.id)
                             if(chat!=null){
@@ -208,7 +216,8 @@ fun MainMenuScreen(
 //                        lastMessage = "Zdravei!!",
 //                        date = "Днес",
 //                        time = "12:34",
-//                        onClick = { navigateToChat() }
+//                        isLastMessageFromMe = false,
+//                        onClick = { }
 //                    )
 //
 //                    ChatItem(
@@ -232,21 +241,21 @@ fun MainMenuScreen(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Row(
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        // TODO: trqa se mahne sign out butona i da ide na ProfileScreen
-                        Button(
-                            onClick = { viewModel.signOut() },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                        ) {
-                            Text("sign out")
-                        }
-                    }
+//                    Row(
+//                        horizontalArrangement = Arrangement.Start,
+//                        verticalAlignment = Alignment.CenterVertically,
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        // TODO: trqa se mahne sign out butona i da ide na ProfileScreen
+//                        Button(
+//                            onClick = { viewModel.signOut() },
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(vertical = 8.dp)
+//                        ) {
+//                            Text("sign out")
+//                        }
+//                    }
                 }
             }
         }

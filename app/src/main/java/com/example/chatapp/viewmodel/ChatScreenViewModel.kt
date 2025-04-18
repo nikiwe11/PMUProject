@@ -162,3 +162,4 @@ data class ChatUiState(
 data class MessageDetails(
     val message: String = "",
 )
+

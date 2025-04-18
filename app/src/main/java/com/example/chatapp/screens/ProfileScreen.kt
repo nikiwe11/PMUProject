@@ -37,7 +37,7 @@ import com.example.chatapp.viewmodel.MainMenuViewModel
 fun ProfileScreen(
     viewModel: MainMenuViewModel = hiltViewModel(),
     navigateToMainMenu: () -> Unit,
-
+    navigateToLogin: () -> Unit
 ) {
     Scaffold(
         bottomBar = {
@@ -151,7 +151,8 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
                 TextButton(
-                    onClick = { viewModel.signOut() },
+                    onClick = { viewModel.signOut()
+                        navigateToLogin()},
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(

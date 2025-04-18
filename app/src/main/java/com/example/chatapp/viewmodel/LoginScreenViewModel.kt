@@ -27,7 +27,9 @@ class LoginScreenViewModel @Inject constructor(
     fun attemptLogin(onSuccess: () -> Unit, onFail: () -> Unit) {
 
         val fb = FirebaseAuth.getInstance()
-        fb.signInWithEmailAndPassword(
+
+            fb.signInWithEmailAndPassword(
+
             uiState.value.loginDetails.email,
             uiState.value.loginDetails.password
         ).addOnCompleteListener { task ->

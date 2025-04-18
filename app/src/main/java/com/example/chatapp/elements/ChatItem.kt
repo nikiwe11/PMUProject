@@ -1,5 +1,6 @@
 package com.example.chatapp.elements
 
+import android.R.id.message
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +28,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ChatItem(
@@ -88,8 +93,18 @@ fun ChatItem(
             Column(
                 horizontalAlignment = Alignment.End
             ) {
+                val formattedDateTime = remember(date) {
+                try {
+                    val utcDateTime = OffsetDateTime.parse(date)
+                    val localDateTime = utcDateTime.atZoneSameInstant(ZoneId.systemDefault())
+                    localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                } catch (e: Exception) {
+                    "0000-00-00 00:00"
+                }
+            }
                 Text(
-                    text = date,
+                    text = formattedDateTime,
+
                     style = MaterialTheme.typography.bodySmall.copy(color = Color.Black)
                 )
                 Text(

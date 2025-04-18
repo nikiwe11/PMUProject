@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
@@ -75,7 +76,8 @@ fun SignUpScreen(
                             uiState.signUpDetails.copy(password = it)
                         )
                     },
-                    labelText = "Password"
+                    labelText = "Password",
+                    visualTransformation = PasswordVisualTransformation()
                 )
                 Button(
                     onClick = {

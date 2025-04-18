@@ -149,18 +149,18 @@ fun ChatApp(
             ) {
                 ChatScreen(
                     navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) },
-                    navigateToFriendProfile = { navController.navigate(routes.CHAT_SETTINGS) })
+                    )
             }
             composable(route = routes.PROFILE_SETTINGS) {
-                ProfileScreen(navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) })
+                ProfileScreen(navigateToMainMenu = { navController.navigate(routes.MAIN_MENU) },
+                navigateToLogin = {navController.navigate(routes.LOGIN)})
 //                    navigateToLogin = {
 //                        navController.navigate(routes.LOGIN,)})
             }
             composable(route = routes.CHAT_SETTINGS) {
-                FriendProfile(navigateToChat = { navController.navigate(routes.CHAT) })
+//                FriendProfile(navigateToChat = { navController.navigate(routes.CHAT) })
             }
         }
-
     }
 }
 

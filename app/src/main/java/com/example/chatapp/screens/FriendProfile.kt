@@ -30,12 +30,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.chatapp.data.model.User
 import com.example.chatapp.general.Constants
 import com.example.chatapp.general.TransparentSurfaceWithGradient
 import com.example.chatapp.general.selectFromTheme
 
 @Composable
 fun FriendProfile(
+    friend: User,
     navigateToChat: () -> Unit,
 ) {
     val status = "Hey there! I'm using AppIme"
@@ -108,7 +110,7 @@ fun FriendProfile(
 
 
             Text(
-                text = "Penka Penova",
+                text = friend.name,
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(vertical = 8.dp)
             )

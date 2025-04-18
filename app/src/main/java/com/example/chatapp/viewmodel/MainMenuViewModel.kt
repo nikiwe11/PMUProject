@@ -125,4 +125,12 @@ object CurrentUser {
     var id: String = ""
     var name: String = ""
     var friends: List<User> = listOf()
+    fun getFriendById(_id: String) : User ?{
+        friends.forEach { friend ->
+            if (friend.id==_id){
+                return friend
+            }
+        }
+        return null
+    }
 }
