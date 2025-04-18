@@ -200,13 +200,11 @@ fun MainMenuScreen(
                             }
                         }
                     }
-                    LazyColumn(content = {
-                        Log.d("GoshoC", "Friends=${CurrentUser.friends.size} friends: ${CurrentUser.friends.map { it.name }}")
+                    LazyColumn (content = {
+                        Log.d("GoshoC","Friends=${CurrentUser.friends}")
                         items(CurrentUser.friends) { friend ->
-                            Log.d("GoshoC", "Processing friend: ${friend.name} (${friend.id})")
                             val chat = viewModel.getChatByFriendId(friend.id)
-                            Log.d("GoshoC", "Found chat for ${friend.name}: ${chat != null}")
-                            if(chat != null) {
+                            if(chat!=null){
                                 ChatItem(
                                     profileIcon = Icons.Default.Person,
                                     name = friend.name,
@@ -216,9 +214,8 @@ fun MainMenuScreen(
                                     time = chat.lastMessage.timeStamp,
                                     onClick = { navigateToChat(friend.id) }
                                 )
-                            } else {
-                                Log.d("GoshoC", "No chat found for ${friend.name}")
                             }
+
                         }
                     })
 

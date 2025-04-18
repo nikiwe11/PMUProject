@@ -100,21 +100,18 @@ fun FriendProfile(
                     .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Profile picture",
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                Text(
+                    text = friend.name.take(1).uppercase(),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
-
 
             Text(
                 text = friend.name,
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-
 
             Text(
                 text = status,
@@ -132,20 +129,17 @@ fun FriendProfile(
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
 
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-
                     Text(
                         text = "Customize profile:",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(bottom = 8.dp),
                         textAlign = TextAlign.Start
                     )
-
 
                     TextButton(
                         onClick = { /* No functionality yet */ },
@@ -170,9 +164,8 @@ fun FriendProfile(
                             textAlign = TextAlign.Start
                         )
                     }
-
-
                 }
             }
         }
-    }}
+    }
+}
