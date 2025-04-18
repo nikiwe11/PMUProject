@@ -81,9 +81,9 @@ fun ChatMessageItem(
                             try {
                                 val utcDateTime = OffsetDateTime.parse(message.timeStamp)
                                 val localDateTime = utcDateTime.atZoneSameInstant(ZoneId.systemDefault())
-                                localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                                localDateTime.format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy"))
                             } catch (e: Exception) {
-                                "0000-00-00 00:00"
+                                "00-00-0000 00:00"
                             }
                         }
                         Text(

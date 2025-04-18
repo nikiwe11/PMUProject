@@ -40,7 +40,7 @@ fun FriendProfile(
     friend: User,
     navigateToChat: () -> Unit,
 ) {
-    val status = "Hey there! I'm using AppIme"
+    val status = "Hey there! I'm using ChatTime"
 
     Scaffold(
         topBar = {
@@ -74,7 +74,7 @@ fun FriendProfile(
                         )
                     }
                     Text(
-                        text = "Penka's profile",
+                        text = "${friend.name}'s profile",
                         style = MaterialTheme.typography.headlineSmall,
                         color = Color.White,
                     )

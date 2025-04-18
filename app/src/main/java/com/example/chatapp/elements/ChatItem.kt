@@ -46,7 +46,7 @@ fun ChatItem(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 70.dp)
+            .heightIn(min = 80.dp)
             .padding(horizontal = 1.dp, vertical = 4.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White
@@ -60,16 +60,11 @@ fun ChatItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             // Profile Icon
-            Icon(
-                imageVector = profileIcon,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray.copy(alpha = 0.2f))
-                    .padding(8.dp),
-                tint = Color.Unspecified
+            ProfileIcon(
+                name = name,
+                modifier = Modifier.size(56.dp)
             )
+
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -93,22 +88,24 @@ fun ChatItem(
             Column(
                 horizontalAlignment = Alignment.End
             ) {
-                val formattedDateTime = remember(date) {
-                try {
-                    val utcDateTime = OffsetDateTime.parse(date)
-                    val localDateTime = utcDateTime.atZoneSameInstant(ZoneId.systemDefault())
-                    localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                } catch (e: Exception) {
-                    "0000-00-00 00:00"
+                val (formattedDate, formattedTime) = remember(date) {
+                    try {
+                        val utcDateTime = OffsetDateTime.parse(date)
+                        val localDateTime = utcDateTime.atZoneSameInstant(ZoneId.systemDefault())
+                        val datePart = localDateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                        val timePart = localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+                        Pair(datePart, timePart)
+                    } catch (e: Exception) {
+                        Pair("00.00.0000", "00:00")
+                    }
                 }
-            }
-                Text(
-                    text = formattedDateTime,
 
+                Text(
+                    text = formattedDate,
                     style = MaterialTheme.typography.bodySmall.copy(color = Color.Black)
                 )
                 Text(
-                    text = time,
+                    text = formattedTime,
                     style = MaterialTheme.typography.bodySmall.copy(color = Color.Black)
                 )
             }

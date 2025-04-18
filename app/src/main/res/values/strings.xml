@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ChatApp</string>
+    <string name="app_name">ChatTime</string>
     <string name="main_menu">Главно меню</string>
     <string name="login">login</string>
     <string name="chat">chat</string>

@@ -41,8 +41,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chatapp.data.model.User
 import com.example.chatapp.elements.ChatItem
@@ -94,12 +96,21 @@ fun MainMenuScreen(
                     ) {
 
                         Image(
-                            painter= painterResource(R.drawable.chat_time_icon),
-                            contentDescription = null
+                            painter = painterResource(R.drawable.chat_time_icon),
+                            contentDescription = null,
+                            modifier = Modifier.size(45.dp)
                         )
 
-                        // Center title
-                        Text(CurrentUser.name)
+
+
+                        Text(
+                            "ChatTime",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = Color.White
+                        )
                         // Right side - Add button
                         TextButton(
                             onClick = navigateToAddFriend,
@@ -189,22 +200,25 @@ fun MainMenuScreen(
                             }
                         }
                     }
-                    LazyColumn (content = {
-                        Log.d("GoshoC","Friends=${CurrentUser.friends}")
+                    LazyColumn(content = {
+                        Log.d("GoshoC", "Friends=${CurrentUser.friends.size} friends: ${CurrentUser.friends.map { it.name }}")
                         items(CurrentUser.friends) { friend ->
+                            Log.d("GoshoC", "Processing friend: ${friend.name} (${friend.id})")
                             val chat = viewModel.getChatByFriendId(friend.id)
-                            if(chat!=null){
+                            Log.d("GoshoC", "Found chat for ${friend.name}: ${chat != null}")
+                            if(chat != null) {
                                 ChatItem(
                                     profileIcon = Icons.Default.Person,
                                     name = friend.name,
                                     lastMessage = chat.lastMessage.text,
                                     date = chat.lastMessage.timeStamp,
                                     isLastMessageFromMe = false,
-                                    time = "12:34",
+                                    time = chat.lastMessage.timeStamp,
                                     onClick = { navigateToChat(friend.id) }
                                 )
+                            } else {
+                                Log.d("GoshoC", "No chat found for ${friend.name}")
                             }
-
                         }
                     })
 
