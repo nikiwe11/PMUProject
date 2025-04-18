@@ -84,7 +84,7 @@ fun ChatItem(
                 )
             }
 
-            // Date and Time
+            // Date and Time.
             Column(
                 horizontalAlignment = Alignment.End
             ) {
