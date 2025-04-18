@@ -3,10 +3,12 @@ package com.example.chatapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chatapp.data.model.Chat
 import com.example.chatapp.data.model.User
 import com.example.chatapp.data.repository.AuthRepository
 import com.example.chatapp.data.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,8 +29,10 @@ class MainMenuViewModel @Inject constructor(
         loadCurrentUser()
     }
 
+
+
     fun loadCurrentUser() {
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val firebaseUser =  FirebaseAuth.getInstance().currentUser
         if (firebaseUser == null) {
             _uiState.update { it.copy(userIsLogged = false) }
         } else {
@@ -53,6 +57,7 @@ class MainMenuViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(userDetails = user!!.toUserDetails(), userIsLogged = true, loading = false)
                         }
+                        loadChats()
                     }
                 }
 
@@ -64,6 +69,33 @@ class MainMenuViewModel @Inject constructor(
             }
 
         }
+    }
+    fun loadChats(){
+        viewModelScope.launch {
+            CurrentUser.friends.forEach { friend ->
+                Log.d("test184","friend: ${friend}")
+                val chat = userRepository.getChat(CurrentUser.id,friend.id)
+                if(chat!=null){
+                    val newChats = uiState.value.chats + chat
+                    _uiState.update { it.copy(chats = newChats) }
+                }
+
+            }
+
+        }
+    }
+
+    fun getChatByFriendId(friendId: String): Chat? {
+        val sortedIds = listOf(CurrentUser.id, friendId).sortedDescending()
+        val chatId = "${sortedIds[0]}_${sortedIds[1]}"
+        uiState.value.chats.forEach { chat ->
+            Log.d("test184","matching $chatId with ${chat.id}")
+            if(chatId==chat.id){
+                Log.d("test184","returning $chat")
+                return chat
+            }
+        }
+        return null
     }
 
     fun signOut() {
@@ -82,6 +114,7 @@ data class MainMenuUiState(
     val userIsLogged: Boolean = true,
     val loading: Boolean = true,
     val userDetails: UserDetails = UserDetails(),
+    val chats: List<Chat> = listOf()
 )
 
 data class UserDetails(

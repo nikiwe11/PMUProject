@@ -5,6 +5,7 @@ import com.example.chatapp.data.model.Chat
 import com.example.chatapp.data.model.Message
 import com.example.chatapp.data.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -87,6 +88,7 @@ class UserRemoteDataSource @Inject constructor(
             .await()
 
         if (!existing.isEmpty) {
+            Log.d("test184","existing: ${existing.documents}")
             return existing.documents[0].id // Return existing chat ID
         }
 
@@ -95,8 +97,61 @@ class UserRemoteDataSource @Inject constructor(
             .document(chat.id) // Use your custom ID
             .set(chat)         // Save the chat data
             .await()
+
         return chat.id
     }
+    suspend fun getChat(user1Id: String, user2Id: String): Chat? {
+        // Sort the participant IDs to avoid issues with different orders of user IDs
+        val sortedIds = listOf(user1Id, user2Id).sortedDescending()
+
+        // Construct a custom chat ID based on sorted participant IDs
+        val chatId = "${sortedIds[0]}_${sortedIds[1]}"
+
+        // Query Firestore to check if a chat already exists with these participants
+        Log.d("test184", "looking for id: $chatId")
+        val existingChatSnapshot = firestore.collection(CHATS)
+            .whereEqualTo("id", chatId)  // Search for chat with these sorted participant IDs
+            .get()
+            .await()
+
+        // If a chat is found, map it to a Chat object
+        if (!existingChatSnapshot.isEmpty) {
+            Log.d("test184", "found snapshot")
+            val chatDocument = existingChatSnapshot.documents[0]
+
+            // Manually map the document to a Chat object
+            val id = chatDocument.id // Chat ID (Firestore document ID)
+            val participantIds = chatDocument.get("participantIds") as? List<String> ?: listOf()
+            val lastMessageData = chatDocument.get("lastMessage") as? Map<*, *>? // Assuming lastMessage is stored as a map
+            Log.d("test184","last msg: $lastMessageData")
+            // Manually map the lastMessage
+            val lastMessage = if (lastMessageData != null) {
+                val text = lastMessageData["text"] as? String ?: ""
+                val senderId = lastMessageData["senderId"] as? String ?: ""
+                val lastChatId = lastMessageData["id"] as? String ?: ""
+                val timeStamp = lastMessageData["timeStamp"] as? String ?: ""
+                Message(
+                    id = lastChatId, // You can generate or leave it empty
+                    senderId = senderId,
+                    text = text,
+                    timeStamp = timeStamp // Populate timestamp if available in the lastMessageData
+                )
+            } else {
+                Message() // Default message if no lastMessage is found
+            }
+
+            // Return the Chat object
+            return Chat(
+                id = id,
+                participantIds = participantIds,
+                lastMessage = lastMessage
+            )
+        }
+
+        // If no chat exists, return null
+        return null
+    }
+
     suspend fun sendMessage(chatId: String, message: Message): String {
         Log.d("test74","chat id: $chatId and message : $message")
         val messageRef = firestore
@@ -109,7 +164,7 @@ class UserRemoteDataSource @Inject constructor(
         // Optionally update chat metadata
         firestore.collection(CHATS).document(chatId).update(
             mapOf(
-                "lastMessage" to message.text,
+                "lastMessage" to message
             )
         )
 
@@ -240,3 +295,4 @@ class UserRemoteDataSource @Inject constructor(
         private const val MESSAGES = "messages"
     }
 }
+

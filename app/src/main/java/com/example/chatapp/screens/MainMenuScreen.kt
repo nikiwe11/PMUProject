@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -60,11 +61,11 @@ fun MainMenuScreen(
 
     val isLoading = true
 
-    if (!uiState.userIsLogged) { // todo Niki: vseki put proverqva za usera i gubi vreme
+    if (!uiState.userIsLogged) {
         navigateToLogin()
     }
     if (uiState.loading) {
-        CircularProgressIndicator() // todo Kris: sloji ekran dokato se jurka logvaneto na usera tuk
+        CircularProgressIndicator()
     } else {
         Scaffold(
             topBar = {
@@ -117,14 +118,12 @@ fun MainMenuScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            // TODO: да се добави бейсик ахх чат иконка
                             text = "Chats",
                             modifier = Modifier.padding(horizontal = 16.dp),
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        // TODO: да се добави иконка за профил, било то дефалтна или избрана от човека
                         TextButton(onClick = { navigateToProfile() }) {
                             Text(
                                 text = "Profile",
@@ -183,6 +182,23 @@ fun MainMenuScreen(
                             }
                         }
                     }
+                    LazyColumn (content = {
+                        items(CurrentUser.friends) { friend ->
+                            val chat = viewModel.getChatByFriendId(friend.id)
+                            if(chat!=null){
+                                ChatItem(
+                                    profileIcon = Icons.Default.Person,
+                                    name = friend.name,
+                                    lastMessage = chat.lastMessage.text,
+                                    date = chat.lastMessage.timeStamp,
+                                    isLastMessageFromMe = false,
+                                    time = "12:34",
+                                    onClick = { navigateToChat(friend.id) }
+                                )
+                            }
+
+                        }
+                    })
 
 
                     // TODO: кат се направят чатовете да се използва за да те изпрати към тях
