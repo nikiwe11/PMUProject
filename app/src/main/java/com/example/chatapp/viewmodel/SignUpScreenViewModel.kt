@@ -105,6 +105,6 @@ data class SignUpUiState(
 // Details (Model). Holds string values that are displayed to the UI
 data class SignUpDetails(
     val name: String = "",
-    val email: String = "@gmail.com",
-    val password: String = "123456",
+    val email: String = "",
+    val password: String = "",
 )
